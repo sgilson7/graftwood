@@ -6,6 +6,11 @@ Stage 9, written by the agent. A fresh session starts from this file.
 
 Graftwood is a Builder project built in one session on 2026-10-10 from `BRIEF.md` (Sam's request and his friend's design, word for word) and `PLAN.md`. Repository `sgilson7/graftwood`, public; a push to `main` runs `./scripts/check.sh` in Chromium on GitHub Actions and deploys `dist/` to Pages only if it passes. Sam approved the repository, Pages, the deploys and the website listing in advance.
 
+## Live (2026-10-11, the playtest edits)
+
+- Game: Actions run 38111837703 (check and deploy passed) for commit d8f4a12; the browser check passed in Chromium, Firefox and WebKit against https://sgilson7.github.io/graftwood/.
+- Website: commit "Graftwood: the playtest edits on its page" in `~/Documents/website`; `make check`, `make packet`, `make gate`, `make deploy` (build 6c8db3d0) and `make gate-live` passed. The built site differed from the published one only in that page (and the sitemap's dates). An uncommitted edit to `content/projects/ribbit-king.md` that was already in the working tree was set aside for the build and put back afterwards, so it is still unpublished and uncommitted.
+
 ## Live (2026-10-10)
 
 - Game: https://sgilson7.github.io/graftwood/ (Actions run 38101767495: check and deploy passed). `BUILDER_ORIGIN=https://sgilson7.github.io/graftwood .venv/bin/python tests/browser/check.py` passed in Chromium, Firefox and WebKit against the live site.
