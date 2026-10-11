@@ -1,0 +1,445 @@
+{
+ "_about": "Every creature. Tier 0 are the starters, 1 to 3 the woods by depth, 4 the boss. mass is how many body parts it can carry; hp its health before parts add to it; shape its body's proportions in percent (forward, up, across).",
+ "creatures": [
+  {
+   "id": "burrowling",
+   "name": "Burrowling",
+   "tier": 0,
+   "mass": 3,
+   "hp": 46,
+   "body": "mud",
+   "accent": "cream",
+   "shape": [
+    100,
+    92,
+    100
+   ],
+   "parts": [
+    "teeth",
+    "thick_fur"
+   ],
+   "blurb": "Sturdy and toothy. Bites, and takes a beating."
+  },
+  {
+   "id": "flitterling",
+   "name": "Flitterling",
+   "tier": 0,
+   "mass": 3,
+   "hp": 44,
+   "body": "teal",
+   "accent": "goldbelt",
+   "shape": [
+    96,
+    90,
+    90
+   ],
+   "parts": [
+    "stinger",
+    "wings"
+   ],
+   "blurb": "Light and hard to hit. Poisons, then waits."
+  },
+  {
+   "id": "sprigling",
+   "name": "Sprigling",
+   "tier": 0,
+   "mass": 3,
+   "hp": 42,
+   "body": "sage",
+   "accent": "blush",
+   "shape": [
+    100,
+    100,
+    100
+   ],
+   "parts": [
+    "spore_cap",
+    "slime_coat"
+   ],
+   "blurb": "Fights from a distance behind a coat of slime."
+  },
+  {
+   "id": "rabbit",
+   "name": "Rabbit",
+   "tier": 2,
+   "mass": 3,
+   "hp": 12,
+   "body": "fur",
+   "accent": "cream",
+   "shape": [
+    110,
+    92,
+    96
+   ],
+   "parts": [
+    "bunny_ears",
+    "teeth",
+    "lucky_feet"
+   ],
+   "blurb": "Ears up, feet ready."
+  },
+  {
+   "id": "ant",
+   "name": "Ant",
+   "tier": 1,
+   "mass": 2,
+   "hp": 7,
+   "body": "ant",
+   "accent": "ink",
+   "shape": [
+    110,
+    70,
+    70
+   ],
+   "parts": [
+    "mandibles",
+    "antennae"
+   ],
+   "blurb": "Small, and not alone for long."
+  },
+  {
+   "id": "wasp",
+   "name": "Wasp",
+   "tier": 1,
+   "mass": 3,
+   "hp": 6,
+   "body": "goldbelt",
+   "accent": "ink",
+   "shape": [
+    120,
+    70,
+    70
+   ],
+   "parts": [
+    "wings",
+    "stinger"
+   ],
+   "blurb": "Buzzing, and very sure of itself."
+  },
+  {
+   "id": "beetle",
+   "name": "Beetle",
+   "tier": 1,
+   "mass": 3,
+   "hp": 9,
+   "body": "chitin",
+   "accent": "goldbelt",
+   "shape": [
+    110,
+    74,
+    90
+   ],
+   "parts": [
+    "mandibles",
+    "shell"
+   ],
+   "blurb": "Slow, armoured, stubborn."
+  },
+  {
+   "id": "snail",
+   "name": "Snail",
+   "tier": 1,
+   "mass": 3,
+   "hp": 10,
+   "body": "snailbody",
+   "accent": "snailshell",
+   "shape": [
+    110,
+    70,
+    70
+   ],
+   "parts": [
+    "shell",
+    "radula",
+    "slime_coat"
+   ],
+   "blurb": "It has all day."
+  },
+  {
+   "id": "mosquito",
+   "name": "Mosquito",
+   "tier": 1,
+   "mass": 3,
+   "hp": 6,
+   "body": "grey",
+   "accent": "ink",
+   "shape": [
+    90,
+    70,
+    70
+   ],
+   "parts": [
+    "proboscis",
+    "wings"
+   ],
+   "blurb": "Thirsty."
+  },
+  {
+   "id": "spider",
+   "name": "Spider",
+   "tier": 1,
+   "mass": 3,
+   "hp": 8,
+   "body": "spider",
+   "accent": "blush",
+   "shape": [
+    96,
+    80,
+    96
+   ],
+   "parts": [
+    "fangs",
+    "silk_spinneret"
+   ],
+   "blurb": "Patient, eight-eyed, hungry."
+  },
+  {
+   "id": "crab",
+   "name": "Crab",
+   "tier": 2,
+   "mass": 4,
+   "hp": 13,
+   "body": "crab",
+   "accent": "cream",
+   "shape": [
+    90,
+    70,
+    120
+   ],
+   "parts": [
+    "pincer",
+    "carapace",
+    "long_legs"
+   ],
+   "blurb": "Sideways, and armoured all round."
+  },
+  {
+   "id": "crayfish",
+   "name": "Crayfish",
+   "tier": 2,
+   "mass": 3,
+   "hp": 11,
+   "body": "crayfish",
+   "accent": "cream",
+   "shape": [
+    120,
+    70,
+    80
+   ],
+   "parts": [
+    "pincer",
+    "shell",
+    "antennae"
+   ],
+   "blurb": "A crab that got lost in a creek."
+  },
+  {
+   "id": "frog",
+   "name": "Frog",
+   "tier": 2,
+   "mass": 3,
+   "hp": 11,
+   "body": "frog",
+   "accent": "cream",
+   "shape": [
+    100,
+    80,
+    110
+   ],
+   "parts": [
+    "sticky_tongue",
+    "long_legs",
+    "slime_coat"
+   ],
+   "blurb": "Damp, fast and sticky."
+  },
+  {
+   "id": "hedgehog",
+   "name": "Hedgehog",
+   "tier": 2,
+   "mass": 4,
+   "hp": 13,
+   "body": "hedgehog",
+   "accent": "cream",
+   "shape": [
+    110,
+    86,
+    96
+   ],
+   "parts": [
+    "spines",
+    "teeth",
+    "thick_fur"
+   ],
+   "blurb": "Do not bite it."
+  },
+  {
+   "id": "centipede",
+   "name": "Centipede",
+   "tier": 2,
+   "mass": 4,
+   "hp": 11,
+   "body": "ant",
+   "accent": "goldbelt",
+   "shape": [
+    140,
+    60,
+    70
+   ],
+   "parts": [
+    "fangs",
+    "long_legs",
+    "mandibles"
+   ],
+   "blurb": "Too many legs, all of them quick."
+  },
+  {
+   "id": "fox",
+   "name": "Fox",
+   "tier": 3,
+   "mass": 4,
+   "hp": 16,
+   "body": "fox",
+   "accent": "cream",
+   "shape": [
+    110,
+    90,
+    90
+   ],
+   "parts": [
+    "teeth",
+    "bushy_tail",
+    "whiskers",
+    "claws"
+   ],
+   "blurb": "Clever, quick, and fond of rabbits."
+  },
+  {
+   "id": "owl",
+   "name": "Owl",
+   "tier": 3,
+   "mass": 4,
+   "hp": 13,
+   "body": "owl",
+   "accent": "cream",
+   "shape": [
+    90,
+    110,
+    96
+   ],
+   "parts": [
+    "beak",
+    "wings",
+    "night_eyes",
+    "talons"
+   ],
+   "blurb": "It watched you all the way here."
+  },
+  {
+   "id": "badger",
+   "name": "Badger",
+   "tier": 3,
+   "mass": 5,
+   "hp": 18,
+   "body": "badger",
+   "accent": "cream",
+   "shape": [
+    120,
+    84,
+    100
+   ],
+   "parts": [
+    "claws",
+    "thick_skull",
+    "thick_fur",
+    "teeth"
+   ],
+   "blurb": "Short-tempered and built like a door."
+  },
+  {
+   "id": "squirrel",
+   "name": "Squirrel",
+   "tier": 3,
+   "mass": 4,
+   "hp": 13,
+   "body": "squirrel",
+   "accent": "cream",
+   "shape": [
+    100,
+    96,
+    90
+   ],
+   "parts": [
+    "acorn_toss",
+    "bushy_tail",
+    "lucky_feet",
+    "teeth"
+   ],
+   "blurb": "Throws what it does not eat."
+  },
+  {
+   "id": "mantis",
+   "name": "Mantis",
+   "tier": 3,
+   "mass": 4,
+   "hp": 12,
+   "body": "mantis",
+   "accent": "goldbelt",
+   "shape": [
+    110,
+    90,
+    70
+   ],
+   "parts": [
+    "scythe_arms",
+    "wings",
+    "antennae"
+   ],
+   "blurb": "Still, then not."
+  },
+  {
+   "id": "lobster",
+   "name": "Lobster",
+   "tier": 3,
+   "mass": 5,
+   "hp": 18,
+   "body": "lobster",
+   "accent": "cream",
+   "shape": [
+    130,
+    70,
+    86
+   ],
+   "parts": [
+    "pincer",
+    "carapace",
+    "tail_fan",
+    "antennae"
+   ],
+   "blurb": "Came up the river to see what all the noise was."
+  },
+  {
+   "id": "old_stag",
+   "name": "The Old Stag",
+   "tier": 4,
+   "mass": 7,
+   "hp": 55,
+   "body": "stag",
+   "accent": "cream",
+   "shape": [
+    120,
+    100,
+    96
+   ],
+   "parts": [
+    "antlers",
+    "hooves",
+    "thick_fur",
+    "long_legs",
+    "mossy_hide",
+    "bunny_ears"
+   ],
+   "blurb": "The wood's oldest body, carrying more than it should. Seven mass and six parts: every part of it is slow."
+  }
+ ]
+}

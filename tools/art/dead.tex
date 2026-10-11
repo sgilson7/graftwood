@@ -1,0 +1,262 @@
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{xcolor}
+% Palette: Sam_Comm_final.png by eye, and the woods' own colours.
+\definecolor{ink}{HTML}{3B2340}
+\definecolor{sky}{HTML}{EFC46A}
+\definecolor{skyhi}{HTML}{F5DA92}
+\definecolor{skylow}{HTML}{E9B060}
+\definecolor{cloud}{HTML}{F2D58A}
+\definecolor{dusk}{HTML}{E99A6A}
+\definecolor{duskhi}{HTML}{F0B07E}
+\definecolor{dusklow}{HTML}{C9746A}
+\definecolor{coral}{HTML}{E88A73}
+\definecolor{salmon}{HTML}{EE9F7E}
+\definecolor{rose}{HTML}{E47A7E}
+\definecolor{peach}{HTML}{F0B07E}
+\definecolor{grass}{HTML}{8DBB7E}
+\definecolor{grassdark}{HTML}{6FA77A}
+\definecolor{grasslight}{HTML}{A9C97F}
+\definecolor{pine}{HTML}{5E9C6A}
+\definecolor{teal}{HTML}{4FA3A5}
+\definecolor{farpine}{HTML}{B7C98A}
+\definecolor{hill}{HTML}{C9C078}
+\definecolor{hillfar}{HTML}{E3C483}
+\definecolor{clearing}{HTML}{B9CF86}
+\definecolor{dirt}{HTML}{D3A77D}
+\definecolor{dirtdark}{HTML}{B98A64}
+\definecolor{stone}{HTML}{A8B0A4}
+\definecolor{trunk}{HTML}{B9835A}
+\definecolor{trunkdark}{HTML}{8C5A44}
+\definecolor{mushroom}{HTML}{F26B38}
+\definecolor{silk}{HTML}{F6E7C4}
+\definecolor{flower}{HTML}{FF6F91}
+\definecolor{flowergold}{HTML}{FFB000}
+\definecolor{leafgold}{HTML}{F2B53A}
+\definecolor{mud}{HTML}{B9835A}
+\definecolor{muddark}{HTML}{8C5A44}
+\definecolor{cream}{HTML}{EBC592}
+\definecolor{blush}{HTML}{F08A8A}
+\definecolor{bone}{HTML}{FBF4E4}
+\definecolor{crabshell}{HTML}{D2463C}
+\definecolor{crabdark}{HTML}{A8323A}
+\definecolor{wing}{HTML}{CDE8E0}
+\definecolor{goldbelt}{HTML}{F2B53A}
+\definecolor{stag}{HTML}{A8693C}
+\definecolor{stagdark}{HTML}{7E4A2C}
+\definecolor{antler}{HTML}{E2C79A}
+\definecolor{moss}{HTML}{6FA77A}
+\definecolor{eyeglow}{HTML}{FFE38A}
+\definecolor{chitin}{HTML}{6B4E71}
+\definecolor{chitinhi}{HTML}{8E6E94}
+\definecolor{acorn}{HTML}{C98A55}
+\definecolor{acorncap}{HTML}{8C5A44}
+\definecolor{fire}{HTML}{FF8A3D}
+\definecolor{firehi}{HTML}{FFE38A}
+\definecolor{jar}{HTML}{CDE8E0}
+\definecolor{white}{HTML}{FFFFFF}
+\begin{document}
+\begin{tikzpicture}
+\clip (0,0) rectangle (32,18);
+\fill[dusk] (0,0) rectangle (32,18);
+\fill[duskhi] (0,14.4) rectangle (32,18);
+\fill[dusklow] (0,0) rectangle (32,7.2);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (4.9,15.2) circle (0.605);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (5.505,15.475) circle (0.77);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (6.22,15.585) circle (0.88);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (6.935,15.365) circle (0.66);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (7.485,15.145) circle (0.495);
+\fill[cloud] (4.9,15.035) -- (7.485,15.035) -- (7.485,15.255) -- (4.9,15.255) -- cycle;
+\draw[ink, line width=1.1pt, line cap=round, line join=round] (4.625,15.035) -- (7.76,15.035);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (17.7,16) circle (0.715);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (18.415,16.325) circle (0.91);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (19.26,16.455) circle (1.04);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (20.105,16.195) circle (0.78);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (20.755,15.935) circle (0.585);
+\fill[cloud] (17.7,15.805) -- (20.755,15.805) -- (20.755,16.065) -- (17.7,16.065) -- cycle;
+\draw[ink, line width=1.1pt, line cap=round, line join=round] (17.375,15.805) -- (21.08,15.805);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (27,14.2) circle (0.55);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (27.55,14.45) circle (0.7);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (28.2,14.55) circle (0.8);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (28.85,14.35) circle (0.6);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cloud] (29.35,14.15) circle (0.45);
+\fill[cloud] (27,14.05) -- (29.35,14.05) -- (29.35,14.25) -- (27,14.25) -- cycle;
+\draw[ink, line width=1.1pt, line cap=round, line join=round] (26.75,14.05) -- (29.6,14.05);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (-1,6.4) circle (2.414);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (2.242,6.4) circle (3.095);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (6.65,6.4) circle (2.297);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (9.212,6.4) circle (2.235);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (11.699,6.4) circle (3.174);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (15.081,6.4) circle (2.85);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (18.235,6.4) circle (2.471);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (21.24,6.4) circle (3.34);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (25.597,6.4) circle (2.023);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (27.899,6.4) circle (2.235);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=coral] (31.107,6.4) circle (3.296);
+\fill[coral] (-1,2.4) -- (33,2.4) -- (33,6.4) -- (-1,6.4) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (-0.747,5) -- (-0.253,5) -- (-0.253,6.443) -- (-0.747,6.443) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (-2.561,6.031) -- (1.561,6.031) -- (-0.5,8.401) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (-2.149,7.37) -- (1.149,7.37) -- (-0.5,9.741) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (-1.654,8.71) -- (0.654,8.71) -- (-0.5,11.08) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (1.98,5) -- (2.366,5) -- (2.366,6.124) -- (1.98,6.124) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (0.568,5.803) -- (3.778,5.803) -- (2.173,7.649) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (0.889,6.846) -- (3.457,6.846) -- (2.173,8.692) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (1.274,7.89) -- (3.072,7.89) -- (2.173,9.736) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (4.118,5) -- (4.56,5) -- (4.56,6.288) -- (4.118,6.288) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (2.499,5.92) -- (6.179,5.92) -- (4.339,8.036) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (2.867,7.116) -- (5.811,7.116) -- (4.339,9.231) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (3.309,8.312) -- (5.369,8.312) -- (4.339,10.427) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (6.583,5) -- (7.041,5) -- (7.041,6.338) -- (6.583,6.338) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (4.901,5.955) -- (8.723,5.955) -- (6.812,8.153) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (5.283,7.198) -- (8.341,7.198) -- (6.812,9.395) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (5.742,8.44) -- (7.882,8.44) -- (6.812,10.637) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (9.07,5) -- (9.56,5) -- (9.56,6.427) -- (9.07,6.427) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (7.276,6.019) -- (11.354,6.019) -- (9.315,8.364) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (7.684,7.344) -- (10.946,7.344) -- (9.315,9.689) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (8.173,8.669) -- (10.457,8.669) -- (9.315,11.014) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunk] (11.455,5) -- (11.975,5) -- (11.975,7.798) -- (11.455,7.798) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=trunkdark] (10.715,8.098) circle (1.239);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=trunkdark] (12.714,8.298) circle (1.319);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=trunkdark] (11.715,9.397) circle (1.479);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunk] (14.004,5) -- (14.48,5) -- (14.48,7.56) -- (14.004,7.56) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=rose] (13.328,7.835) circle (1.134);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=rose] (15.156,8.017) circle (1.207);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=rose] (14.242,9.023) circle (1.353);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (16.174,5) -- (16.558,5) -- (16.558,6.122) -- (16.174,6.122) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (14.763,5.801) -- (17.969,5.801) -- (16.366,7.644) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (15.084,6.843) -- (17.648,6.843) -- (16.366,8.686) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (15.468,7.885) -- (17.263,7.885) -- (16.366,9.728) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (17.945,5) -- (18.306,5) -- (18.306,6.053) -- (17.945,6.053) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (16.621,5.752) -- (19.63,5.752) -- (18.125,7.483) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (16.922,6.73) -- (19.329,6.73) -- (18.125,8.461) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (17.283,7.708) -- (18.968,7.708) -- (18.125,9.439) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (19.652,5) -- (20.158,5) -- (20.158,6.477) -- (19.652,6.477) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (17.796,6.055) -- (22.014,6.055) -- (19.905,8.48) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (18.217,7.426) -- (21.592,7.426) -- (19.905,9.851) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (18.724,8.797) -- (21.086,8.797) -- (19.905,11.222) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (21.65,5) -- (22.111,5) -- (22.111,6.345) -- (21.65,6.345) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (19.96,5.96) -- (23.802,5.96) -- (21.881,8.17) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (20.344,7.209) -- (23.417,7.209) -- (21.881,9.418) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (20.805,8.458) -- (22.956,8.458) -- (21.881,10.667) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (23.403,5) -- (23.82,5) -- (23.82,6.218) -- (23.403,6.218) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (21.872,5.87) -- (25.351,5.87) -- (23.612,7.87) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (22.22,7) -- (25.003,7) -- (23.612,9.001) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (22.637,8.131) -- (24.586,8.131) -- (23.612,10.131) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (25.055,5) -- (25.546,5) -- (25.546,6.431) -- (25.055,6.431) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (23.255,6.022) -- (27.345,6.022) -- (25.3,8.374) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (23.664,7.352) -- (26.936,7.352) -- (25.3,9.703) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (24.155,8.681) -- (26.445,8.681) -- (25.3,11.032) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (27.096,5) -- (27.512,5) -- (27.512,6.212) -- (27.096,6.212) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (25.573,5.865) -- (29.035,5.865) -- (27.304,7.856) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (25.919,6.99) -- (28.689,6.99) -- (27.304,8.981) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=pine] (26.335,8.115) -- (28.273,8.115) -- (27.304,10.106) -- cycle;
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunk] (28.767,5) -- (29.308,5) -- (29.308,7.916) -- (28.767,7.916) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=trunkdark] (27.996,8.229) circle (1.291);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=trunkdark] (30.079,8.437) circle (1.375);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=trunkdark] (29.037,9.582) circle (1.541);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] (31.342,5) -- (31.851,5) -- (31.851,6.485) -- (31.342,6.485) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (29.475,6.061) -- (33.717,6.061) -- (31.596,8.5) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (29.899,7.439) -- (33.293,7.439) -- (31.596,9.879) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=teal] (30.408,8.818) -- (32.784,8.818) -- (31.596,11.257) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, fill=grassdark] (-0.5,-0.5) rectangle (32.5,5.2);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=grass] plot[smooth cycle, tension=0.55] coordinates {(30.5,2.4) (30.06,3.049) (28.781,3.634) (26.79,4.099) (24.281,4.397) (21.5,4.5) (18.719,4.397) (16.21,4.099) (14.219,3.634) (12.94,3.049) (12.5,2.4) (12.94,1.751) (14.219,1.166) (16.21,0.701) (18.719,0.403) (21.5,0.3) (24.281,0.403) (26.79,0.701) (28.781,1.166) (30.06,1.751)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=wing] plot[smooth cycle, tension=0.55] coordinates {(18.025,3.14) (17.897,2.954) (17.876,2.633) (17.966,2.209) (18.157,1.724) (18.43,1.224) (18.759,0.759) (19.112,0.375) (19.454,0.108) (19.751,-0.014) (19.975,0.02) (20.103,0.206) (20.124,0.527) (20.034,0.951) (19.843,1.436) (19.57,1.936) (19.241,2.401) (18.888,2.785) (18.546,3.052) (18.249,3.174)};
+\draw[ink, line width=0.96pt, line cap=round, line join=round] (19.763,0.359) -- (18.237,2.801);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=wing] plot[smooth cycle, tension=0.55] coordinates {(19.117,2.43) (18.976,2.332) (18.877,2.114) (18.829,1.796) (18.836,1.41) (18.899,0.994) (19.011,0.588) (19.161,0.232) (19.334,-0.039) (19.514,-0.198) (19.683,-0.23) (19.824,-0.132) (19.923,0.086) (19.971,0.404) (19.964,0.79) (19.901,1.206) (19.789,1.612) (19.639,1.968) (19.466,2.239) (19.286,2.398)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=goldbelt] plot[smooth cycle, tension=0.3] coordinates {(21.083,1.292) (21.146,0.233) (21.238,-0.809) (21.178,-0.831) (20.534,0.047) (20.117,1.068)};
+\draw[ink, line width=1.92pt, line cap=round, line join=round] (20.44,0.62) -- (21.208,0.428);
+\draw[ink, line width=1.92pt, line cap=round, line join=round] (20.608,0.06) -- (21.32,-0.132);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=muddark] plot[smooth cycle, tension=0.55] coordinates {(22.008,2.092) (21.939,2.067) (21.876,1.994) (21.827,1.881) (21.795,1.738) (21.784,1.58) (21.795,1.422) (21.827,1.279) (21.876,1.166) (21.939,1.093) (22.008,1.068) (22.077,1.093) (22.14,1.166) (22.189,1.279) (22.221,1.422) (22.232,1.58) (22.221,1.738) (22.189,1.881) (22.14,1.994) (22.077,2.067)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=muddark] plot[smooth cycle, tension=0.55] coordinates {(22.008,3.644) (21.939,3.617) (21.876,3.54) (21.827,3.42) (21.795,3.268) (21.784,3.1) (21.795,2.932) (21.827,2.78) (21.876,2.66) (21.939,2.583) (22.008,2.556) (22.077,2.583) (22.14,2.66) (22.189,2.78) (22.221,2.932) (22.232,3.1) (22.221,3.268) (22.189,3.42) (22.14,3.54) (22.077,3.617)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=mud] plot[smooth cycle, tension=0.55] coordinates {(18.603,2.13) (18.309,2.041) (18.052,1.93) (17.856,1.808) (17.741,1.688) (17.717,1.58) (17.788,1.496) (17.947,1.443) (18.177,1.428) (18.456,1.451) (18.757,1.51) (19.051,1.599) (19.308,1.71) (19.504,1.832) (19.619,1.952) (19.643,2.06) (19.572,2.144) (19.413,2.197) (19.183,2.212) (18.904,2.189)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=mud] (20.44,2.3) circle (1.6);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=cream] plot[smooth cycle, tension=0.55] coordinates {(20.92,3.772) (20.673,3.723) (20.45,3.583) (20.273,3.363) (20.159,3.087) (20.12,2.78) (20.159,2.473) (20.273,2.197) (20.45,1.977) (20.673,1.837) (20.92,1.788) (21.167,1.837) (21.39,1.977) (21.567,2.197) (21.681,2.473) (21.72,2.78) (21.681,3.087) (21.567,3.363) (21.39,3.583) (21.167,3.723)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=mud] plot[smooth cycle, tension=0.55] coordinates {(18.529,2.849) (18.15,2.925) (17.8,2.958) (17.513,2.946) (17.316,2.889) (17.229,2.794) (17.261,2.669) (17.408,2.526) (17.656,2.381) (17.981,2.246) (18.351,2.135) (18.73,2.059) (19.08,2.026) (19.367,2.038) (19.564,2.095) (19.651,2.19) (19.619,2.315) (19.472,2.458) (19.224,2.603) (18.899,2.738)};
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=blush] plot[smooth cycle, tension=0.55] coordinates {(18.517,2.671) (18.252,2.729) (18.008,2.766) (17.811,2.779) (17.679,2.766) (17.625,2.728) (17.655,2.67) (17.765,2.596) (17.946,2.515) (18.178,2.433) (18.44,2.36) (18.706,2.302) (18.949,2.265) (19.147,2.252) (19.279,2.265) (19.333,2.302) (19.303,2.361) (19.192,2.434) (19.012,2.516) (18.779,2.597)};
+\draw[ink, line width=2.88pt, line cap=round, line join=round] (20.152,2.908) -- (19.608,3.452);
+\draw[ink, line width=2.88pt, line cap=round, line join=round] (19.608,2.908) -- (20.152,3.452);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=ink] plot[smooth cycle, tension=0.4] coordinates {(20.6,3.292) (20.504,3.868) (20.888,3.772) (20.92,3.42)};
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=bone] (20.728,3.42) -- (20.728,3.564) -- (20.552,3.564) -- (20.552,3.42) -- cycle;
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=bone] (20.712,3.612) -- (20.712,3.756) -- (20.536,3.756) -- (20.536,3.612) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=crabshell] plot[smooth cycle, tension=0.3] coordinates {(20.649,3.161) (20.569,3.958) (20.49,4.513) (20.87,4.567) (20.951,4.002) (21.031,3.199)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=crabshell] plot[smooth cycle, tension=0.5] coordinates {(20.918,4.523) (20.983,5.265) (20.556,5.84) (20.391,5.486) (20.497,4.611)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=crabshell] plot[smooth cycle, tension=0.5] coordinates {(20.432,4.518) (20.338,5.233) (19.83,5.631) (19.888,5.024) (20.131,4.384)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=crabdark] (20.503,4.482) circle (0.384);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=silk] plot[smooth cycle, tension=0.3] coordinates {(19.509,3.6) (19.691,3.6) (19.67,3.95) (19.53,3.95)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=mushroom] (19.936,3.915) -- (19.925,3.98) -- (19.891,4.041) -- (19.838,4.093) -- (19.768,4.133) -- (19.687,4.158) -- (19.6,4.167) -- (19.513,4.158) -- (19.432,4.133) -- (19.362,4.093) -- (19.309,4.041) -- (19.275,3.98) -- (19.264,3.915) -- cycle;
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (19.46,4.02) circle (0.049);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (19.684,4.09) circle (0.042);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (19.782,3.985) circle (0.035);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=silk] plot[smooth cycle, tension=0.3] coordinates {(20.729,3.9) (20.872,3.9) (20.855,4.175) (20.745,4.175)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=mushroom] (21.064,4.147) -- (21.055,4.199) -- (21.029,4.247) -- (20.987,4.288) -- (20.932,4.319) -- (20.868,4.339) -- (20.8,4.346) -- (20.732,4.339) -- (20.668,4.319) -- (20.613,4.288) -- (20.571,4.247) -- (20.545,4.199) -- (20.536,4.147) -- cycle;
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (20.69,4.23) circle (0.039);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (20.866,4.285) circle (0.033);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (20.943,4.202) circle (0.028);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=silk] plot[smooth cycle, tension=0.3] coordinates {(21.816,3.6) (21.984,3.6) (21.965,3.925) (21.835,3.925)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=mushroom] (22.212,3.893) -- (22.201,3.953) -- (22.17,4.01) -- (22.121,4.058) -- (22.056,4.095) -- (21.981,4.119) -- (21.9,4.127) -- (21.819,4.119) -- (21.744,4.095) -- (21.679,4.058) -- (21.63,4.01) -- (21.599,3.953) -- (21.588,3.893) -- cycle;
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (21.77,3.99) circle (0.046);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (21.978,4.055) circle (0.039);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (22.069,3.958) circle (0.033);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=silk] plot[smooth cycle, tension=0.3] coordinates {(24.296,1.6) (24.504,1.6) (24.48,2) (24.32,2)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=mushroom] (24.784,1.96) -- (24.771,2.035) -- (24.733,2.104) -- (24.672,2.164) -- (24.592,2.209) -- (24.499,2.238) -- (24.4,2.248) -- (24.301,2.238) -- (24.208,2.209) -- (24.128,2.164) -- (24.067,2.104) -- (24.029,2.035) -- (24.016,1.96) -- cycle;
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (24.24,2.08) circle (0.056);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (24.496,2.16) circle (0.048);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (24.608,2.04) circle (0.04);
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=silk] plot[smooth cycle, tension=0.3] coordinates {(16.922,1.3) (17.078,1.3) (17.06,1.6) (16.94,1.6)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=mushroom] (17.288,1.57) -- (17.278,1.626) -- (17.249,1.678) -- (17.204,1.723) -- (17.144,1.757) -- (17.075,1.779) -- (17,1.786) -- (16.925,1.779) -- (16.856,1.757) -- (16.796,1.723) -- (16.751,1.678) -- (16.722,1.626) -- (16.712,1.57) -- cycle;
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (16.88,1.66) circle (0.042);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (17.072,1.72) circle (0.036);
+\filldraw[draw=ink, line width=0.66pt, line join=round, fill=silk] (17.156,1.63) circle (0.03);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (17.205,10.79) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (23.665,10.503) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (19.789,12.005) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (19.473,7.249) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (16.378,11.524) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (15.465,6.481) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (14.71,11.079) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (23.233,9.976) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (14.179,8.835) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (19.504,5.019) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (13.552,14.977) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (15.627,7.317) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (18.207,10.57) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (14.855,9.169) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (19.917,13.18) circle (0.09);
+\filldraw[draw=ink, line width=0.55pt, line join=round, fill=eyeglow] (13.6,7.682) circle (0.09);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=rose] plot[smooth cycle, tension=0.5] coordinates {(22.474,15.53) (22.167,15.46) (21.899,15.624) (22.205,15.694)};
+\draw[ink, line width=0.546pt, line cap=round, line join=round] (22.456,15.533) -- (21.917,15.621);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] plot[smooth cycle, tension=0.5] coordinates {(16.893,13.441) (16.938,13.159) (16.775,12.926) (16.729,13.207)};
+\draw[ink, line width=0.495pt, line cap=round, line join=round] (16.889,13.425) -- (16.778,12.942);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=coral] plot[smooth cycle, tension=0.5] coordinates {(26.471,5.879) (26.767,5.693) (26.849,5.354) (26.553,5.54)};
+\draw[ink, line width=0.606pt, line cap=round, line join=round] (26.483,5.863) -- (26.837,5.37);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=coral] plot[smooth cycle, tension=0.5] coordinates {(21.145,5.487) (20.935,5.185) (20.575,5.115) (20.784,5.417)};
+\draw[ink, line width=0.638pt, line cap=round, line join=round] (21.127,5.475) -- (20.593,5.126);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] plot[smooth cycle, tension=0.5] coordinates {(16.931,6.792) (16.723,6.847) (16.612,7.031) (16.82,6.976)};
+\draw[ink, line width=0.374pt, line cap=round, line join=round] (16.921,6.799) -- (16.622,7.024);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=coral] plot[smooth cycle, tension=0.5] coordinates {(14.479,2.941) (14.392,2.553) (14.058,2.336) (14.146,2.724)};
+\draw[ink, line width=0.692pt, line cap=round, line join=round] (14.466,2.923) -- (14.071,2.355);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=coral] plot[smooth cycle, tension=0.5] coordinates {(16.671,8.471) (16.418,8.67) (16.374,8.989) (16.628,8.791)};
+\draw[ink, line width=0.56pt, line cap=round, line join=round] (16.662,8.488) -- (16.384,8.973);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=coral] plot[smooth cycle, tension=0.5] coordinates {(22.561,15.25) (22.74,15.407) (22.978,15.393) (22.798,15.237)};
+\draw[ink, line width=0.413pt, line cap=round, line join=round] (22.574,15.255) -- (22.965,15.389);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] plot[smooth cycle, tension=0.5] coordinates {(28.426,4.894) (28.169,4.978) (28.044,5.217) (28.3,5.134)};
+\draw[ink, line width=0.469pt, line cap=round, line join=round] (28.414,4.904) -- (28.056,5.207);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=rose] plot[smooth cycle, tension=0.5] coordinates {(19.677,3.541) (19.49,3.295) (19.184,3.249) (19.371,3.495)};
+\draw[ink, line width=0.537pt, line cap=round, line join=round] (19.661,3.532) -- (19.2,3.258);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] plot[smooth cycle, tension=0.5] coordinates {(31.11,2.396) (31.225,2.692) (31.515,2.824) (31.399,2.528)};
+\draw[ink, line width=0.553pt, line cap=round, line join=round] (31.122,2.409) -- (31.502,2.811);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] plot[smooth cycle, tension=0.5] coordinates {(18.761,14.29) (18.885,14.585) (19.179,14.711) (19.056,14.416)};
+\draw[ink, line width=0.556pt, line cap=round, line join=round] (18.774,14.303) -- (19.166,14.698);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=coral] plot[smooth cycle, tension=0.5] coordinates {(29.276,14.6) (29.479,14.884) (29.822,14.945) (29.619,14.662)};
+\draw[ink, line width=0.605pt, line cap=round, line join=round] (29.293,14.611) -- (29.805,14.935);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] plot[smooth cycle, tension=0.5] coordinates {(13.967,5.595) (14.26,5.833) (14.636,5.799) (14.343,5.561)};
+\draw[ink, line width=0.656pt, line cap=round, line join=round] (13.988,5.602) -- (14.616,5.792);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=coral] plot[smooth cycle, tension=0.5] coordinates {(25.076,15.235) (25.389,15.199) (25.588,14.955) (25.275,14.991)};
+\draw[ink, line width=0.547pt, line cap=round, line join=round] (25.092,15.226) -- (25.572,14.964);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=trunkdark] plot[smooth cycle, tension=0.5] coordinates {(16.802,7.562) (16.632,7.425) (16.415,7.444) (16.584,7.582)};
+\draw[ink, line width=0.38pt, line cap=round, line join=round] (16.79,7.559) -- (16.427,7.448);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=rose] plot[smooth cycle, tension=0.5] coordinates {(15.022,4.192) (15.245,3.966) (15.247,3.648) (15.024,3.875)};
+\draw[ink, line width=0.552pt, line cap=round, line join=round] (15.029,4.175) -- (15.24,3.665);
+\filldraw[draw=ink, line width=0.88pt, line join=round, fill=coral] plot[smooth cycle, tension=0.5] coordinates {(20.356,3.79) (20.216,4.078) (20.316,4.382) (20.456,4.094)};
+\draw[ink, line width=0.556pt, line cap=round, line join=round] (20.355,3.809) -- (20.317,4.364);
+\end{tikzpicture}
+\end{document}

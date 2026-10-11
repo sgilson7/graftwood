@@ -1,0 +1,2182 @@
+{
+ "_about": "Every body part. A part sits in one socket, takes one unit of mass, and either acts on a timer (action: kind, amount, every_ms) or changes its creature for good (mods), or both. Tier 0 parts are never sold or found. A model's numbers are hundredths of the body's radius from the socket: at, full size, rot in degrees about x, y, z; mirror draws it again on the far side. Colour 'part' is the part's own colour, 'body' and 'accent' the creature's.",
+ "parts": [
+  {
+   "id": "teeth",
+   "name": "Teeth",
+   "socket": "mouth",
+   "colour": "bone",
+   "tier": 1,
+   "action": {
+    "kind": "melee",
+    "amount": 2,
+    "every_ms": 2000
+   },
+   "flavour": "Two front teeth, always growing.",
+   "model": [
+    {
+     "mesh": "cube",
+     "at": [
+      4,
+      -8,
+      12
+     ],
+     "size": [
+      12,
+      20,
+      10
+     ],
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "mandibles",
+   "name": "Mandibles",
+   "socket": "mouth",
+   "colour": "chitin",
+   "tier": 1,
+   "action": {
+    "kind": "melee",
+    "amount": 3,
+    "every_ms": 3000
+   },
+   "flavour": "Pincers on the face, closing sideways.",
+   "model": [
+    {
+     "mesh": "wedge",
+     "at": [
+      18,
+      -4,
+      20
+     ],
+     "size": [
+      40,
+      10,
+      12
+     ],
+     "rot": [
+      0,
+      -30,
+      0
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      36,
+      -4,
+      8
+     ],
+     "size": [
+      8,
+      18,
+      8
+     ],
+     "rot": [
+      0,
+      0,
+      -90
+     ],
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "radula",
+   "name": "Radula",
+   "socket": "mouth",
+   "colour": "tongue",
+   "tier": 1,
+   "action": {
+    "kind": "melee",
+    "amount": 1,
+    "every_ms": 1500
+   },
+   "flavour": "A tongue like a file.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      8,
+      -12,
+      0
+     ],
+     "size": [
+      26,
+      14,
+      30
+     ]
+    },
+    {
+     "mesh": "cube",
+     "at": [
+      18,
+      -12,
+      0
+     ],
+     "size": [
+      6,
+      6,
+      24
+     ]
+    }
+   ]
+  },
+  {
+   "id": "claws",
+   "name": "Claws",
+   "socket": "side",
+   "colour": "bone",
+   "tier": 2,
+   "action": {
+    "kind": "melee",
+    "amount": 1,
+    "every_ms": 1000
+   },
+   "flavour": "Quick, small and many.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "size": [
+      34,
+      24,
+      24
+     ],
+     "colour": "body"
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      26,
+      0,
+      -8
+     ],
+     "size": [
+      8,
+      22,
+      8
+     ],
+     "rot": [
+      0,
+      0,
+      -90
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      26,
+      0,
+      0
+     ],
+     "size": [
+      8,
+      24,
+      8
+     ],
+     "rot": [
+      0,
+      0,
+      -90
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      26,
+      0,
+      8
+     ],
+     "size": [
+      8,
+      22,
+      8
+     ],
+     "rot": [
+      0,
+      0,
+      -90
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pincer",
+   "name": "Pincer",
+   "socket": "side",
+   "colour": "crabshell",
+   "tier": 2,
+   "action": {
+    "kind": "melee",
+    "amount": 4,
+    "every_ms": 3500
+   },
+   "flavour": "One big claw, slow to close.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "size": [
+      18,
+      40,
+      18
+     ],
+     "rot": [
+      0,
+      0,
+      -90
+     ]
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      34,
+      0,
+      0
+     ],
+     "size": [
+      46,
+      30,
+      28
+     ]
+    },
+    {
+     "mesh": "wedge",
+     "at": [
+      66,
+      10,
+      0
+     ],
+     "size": [
+      30,
+      12,
+      16
+     ],
+     "rot": [
+      0,
+      90,
+      0
+     ]
+    },
+    {
+     "mesh": "wedge",
+     "at": [
+      64,
+      -10,
+      0
+     ],
+     "size": [
+      26,
+      10,
+      14
+     ],
+     "rot": [
+      0,
+      90,
+      180
+     ]
+    }
+   ]
+  },
+  {
+   "id": "scythe_arms",
+   "name": "Scythe Arms",
+   "socket": "side",
+   "colour": "mantis",
+   "tier": 3,
+   "action": {
+    "kind": "melee",
+    "amount": 3,
+    "every_ms": 2000
+   },
+   "flavour": "Folded like prayer, opened like a gate.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      10,
+      20,
+      0
+     ],
+     "size": [
+      10,
+      50,
+      10
+     ],
+     "rot": [
+      0,
+      0,
+      -40
+     ]
+    },
+    {
+     "mesh": "wedge",
+     "at": [
+      38,
+      30,
+      0
+     ],
+     "size": [
+      14,
+      60,
+      10
+     ],
+     "rot": [
+      0,
+      0,
+      -150
+     ]
+    }
+   ]
+  },
+  {
+   "id": "beak",
+   "name": "Beak",
+   "socket": "mouth",
+   "colour": "beak",
+   "tier": 3,
+   "action": {
+    "kind": "melee",
+    "amount": 3,
+    "every_ms": 2500
+   },
+   "flavour": "Hooked at the tip.",
+   "model": [
+    {
+     "mesh": "cone",
+     "at": [
+      18,
+      4,
+      0
+     ],
+     "size": [
+      30,
+      46,
+      30
+     ],
+     "rot": [
+      0,
+      0,
+      -90
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      14,
+      -8,
+      0
+     ],
+     "size": [
+      22,
+      30,
+      22
+     ],
+     "rot": [
+      0,
+      0,
+      -110
+     ]
+    }
+   ]
+  },
+  {
+   "id": "talons",
+   "name": "Talons",
+   "socket": "legs",
+   "colour": "beak",
+   "tier": 3,
+   "action": {
+    "kind": "melee",
+    "amount": 2,
+    "every_ms": 1500
+   },
+   "flavour": "Grips that do not let go.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      20,
+      10,
+      35
+     ],
+     "size": [
+      8,
+      30,
+      8
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      34,
+      -6,
+      35
+     ],
+     "size": [
+      8,
+      20,
+      8
+     ],
+     "rot": [
+      0,
+      0,
+      -90
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      30,
+      -6,
+      44
+     ],
+     "size": [
+      8,
+      18,
+      8
+     ],
+     "rot": [
+      0,
+      -30,
+      -90
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cyl",
+     "at": [
+      20,
+      10,
+      -35
+     ],
+     "size": [
+      8,
+      30,
+      8
+     ]
+    }
+   ]
+  },
+  {
+   "id": "antlers",
+   "name": "Antlers",
+   "socket": "head",
+   "colour": "antler",
+   "tier": 0,
+   "action": {
+    "kind": "melee",
+    "amount": 6,
+    "every_ms": 5000
+   },
+   "flavour": "A crown grown new every spring.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      0,
+      40,
+      28
+     ],
+     "size": [
+      9,
+      80,
+      9
+     ],
+     "rot": [
+      -25,
+      0,
+      0
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cyl",
+     "at": [
+      0,
+      80,
+      62
+     ],
+     "size": [
+      7,
+      60,
+      7
+     ],
+     "rot": [
+      -60,
+      0,
+      0
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cyl",
+     "at": [
+      14,
+      92,
+      44
+     ],
+     "size": [
+      6,
+      40,
+      6
+     ],
+     "rot": [
+      -10,
+      0,
+      -35
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cyl",
+     "at": [
+      -12,
+      96,
+      50
+     ],
+     "size": [
+      6,
+      40,
+      6
+     ],
+     "rot": [
+      -10,
+      0,
+      35
+     ],
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "hooves",
+   "name": "Hooves",
+   "socket": "legs",
+   "colour": "ink",
+   "tier": 0,
+   "action": {
+    "kind": "melee",
+    "amount": 2,
+    "every_ms": 1500
+   },
+   "flavour": "Hard as stones and as heavy.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      28,
+      -10,
+      32
+     ],
+     "size": [
+      14,
+      40,
+      14
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cyl",
+     "at": [
+      -28,
+      -10,
+      32
+     ],
+     "size": [
+      14,
+      40,
+      14
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cube",
+     "at": [
+      30,
+      -32,
+      32
+     ],
+     "size": [
+      18,
+      10,
+      18
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cube",
+     "at": [
+      -26,
+      -32,
+      32
+     ],
+     "size": [
+      18,
+      10,
+      18
+     ],
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "proboscis",
+   "name": "Proboscis",
+   "socket": "mouth",
+   "colour": "chitin",
+   "tier": 2,
+   "action": {
+    "kind": "drain",
+    "amount": 2,
+    "every_ms": 3000
+   },
+   "flavour": "Takes what it draws.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      30,
+      -6,
+      0
+     ],
+     "size": [
+      6,
+      70,
+      6
+     ],
+     "rot": [
+      0,
+      0,
+      -100
+     ]
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      4,
+      0,
+      0
+     ],
+     "size": [
+      18,
+      18,
+      18
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fangs",
+   "name": "Fangs",
+   "socket": "mouth",
+   "colour": "bone",
+   "tier": 2,
+   "action": {
+    "kind": "poison",
+    "amount": 2,
+    "every_ms": 5000
+   },
+   "flavour": "Two hollow needles.",
+   "model": [
+    {
+     "mesh": "cone",
+     "at": [
+      8,
+      -20,
+      10
+     ],
+     "size": [
+      9,
+      28,
+      9
+     ],
+     "rot": [
+      180,
+      0,
+      0
+     ],
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "stinger",
+   "name": "Stinger",
+   "socket": "tail",
+   "colour": "chitin",
+   "tier": 1,
+   "action": {
+    "kind": "poison",
+    "amount": 1,
+    "every_ms": 4000
+   },
+   "flavour": "Once a second-rate ovipositor.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      -6,
+      0,
+      0
+     ],
+     "size": [
+      30,
+      26,
+      26
+     ],
+     "colour": "accent"
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -30,
+      0,
+      0
+     ],
+     "size": [
+      14,
+      40,
+      14
+     ],
+     "rot": [
+      0,
+      0,
+      90
+     ]
+    }
+   ]
+  },
+  {
+   "id": "quills",
+   "name": "Quills",
+   "socket": "back",
+   "colour": "quill",
+   "tier": 2,
+   "action": {
+    "kind": "ranged",
+    "amount": 2,
+    "every_ms": 3000
+   },
+   "flavour": "Thrown with a shrug.",
+   "model": [
+    {
+     "mesh": "cone",
+     "at": [
+      -30,
+      10,
+      0
+     ],
+     "size": [
+      8,
+      50,
+      8
+     ],
+     "rot": [
+      0,
+      0,
+      30
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -10,
+      14,
+      14
+     ],
+     "size": [
+      8,
+      54,
+      8
+     ],
+     "rot": [
+      20,
+      0,
+      25
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -10,
+      14,
+      -14
+     ],
+     "size": [
+      8,
+      54,
+      8
+     ],
+     "rot": [
+      -20,
+      0,
+      25
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      10,
+      12,
+      0
+     ],
+     "size": [
+      8,
+      46,
+      8
+     ],
+     "rot": [
+      0,
+      0,
+      20
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -36,
+      4,
+      20
+     ],
+     "size": [
+      8,
+      44,
+      8
+     ],
+     "rot": [
+      30,
+      0,
+      35
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -36,
+      4,
+      -20
+     ],
+     "size": [
+      8,
+      44,
+      8
+     ],
+     "rot": [
+      -30,
+      0,
+      35
+     ]
+    }
+   ]
+  },
+  {
+   "id": "spit_gland",
+   "name": "Spit Gland",
+   "socket": "mouth",
+   "colour": "slime",
+   "tier": 2,
+   "action": {
+    "kind": "ranged",
+    "amount": 3,
+    "every_ms": 4000
+   },
+   "flavour": "Bitter, and aimed well.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      4,
+      14,
+      0
+     ],
+     "size": [
+      30,
+      30,
+      34
+     ]
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      14,
+      4,
+      0
+     ],
+     "size": [
+      12,
+      12,
+      12
+     ],
+     "colour": "ink"
+    }
+   ]
+  },
+  {
+   "id": "silk_spinneret",
+   "name": "Spinneret",
+   "socket": "tail",
+   "colour": "silk",
+   "tier": 1,
+   "action": {
+    "kind": "ranged",
+    "amount": 1,
+    "every_ms": 1500
+   },
+   "flavour": "Silk spat in strands.",
+   "model": [
+    {
+     "mesh": "cone",
+     "at": [
+      -14,
+      0,
+      0
+     ],
+     "size": [
+      22,
+      30,
+      22
+     ],
+     "rot": [
+      0,
+      0,
+      90
+     ]
+    },
+    {
+     "mesh": "cyl",
+     "at": [
+      -34,
+      0,
+      0
+     ],
+     "size": [
+      4,
+      24,
+      4
+     ],
+     "rot": [
+      0,
+      0,
+      90
+     ]
+    }
+   ]
+  },
+  {
+   "id": "spore_cap",
+   "name": "Spore Cap",
+   "socket": "head",
+   "colour": "mushroom",
+   "tier": 1,
+   "action": {
+    "kind": "ranged",
+    "amount": 2,
+    "every_ms": 2500
+   },
+   "flavour": "It sneezes, and the air turns gold.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      0,
+      14,
+      0
+     ],
+     "size": [
+      16,
+      30,
+      16
+     ],
+     "colour": "silk"
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      0,
+      34,
+      0
+     ],
+     "size": [
+      64,
+      30,
+      64
+     ]
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      14,
+      44,
+      14
+     ],
+     "size": [
+      10,
+      6,
+      10
+     ],
+     "colour": "silk"
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      -12,
+      46,
+      4
+     ],
+     "size": [
+      10,
+      6,
+      10
+     ],
+     "colour": "silk"
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      4,
+      46,
+      -18
+     ],
+     "size": [
+      8,
+      5,
+      8
+     ],
+     "colour": "silk"
+    }
+   ]
+  },
+  {
+   "id": "sticky_tongue",
+   "name": "Sticky Tongue",
+   "socket": "mouth",
+   "colour": "tongue",
+   "tier": 2,
+   "action": {
+    "kind": "ranged",
+    "amount": 2,
+    "every_ms": 2000
+   },
+   "flavour": "It reaches further than it ought to.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      18,
+      -8,
+      0
+     ],
+     "size": [
+      10,
+      40,
+      10
+     ],
+     "rot": [
+      0,
+      0,
+      -95
+     ]
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      42,
+      -10,
+      0
+     ],
+     "size": [
+      16,
+      16,
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "id": "acorn_toss",
+   "name": "Acorn Toss",
+   "socket": "mouth",
+   "colour": "wood",
+   "tier": 3,
+   "action": {
+    "kind": "ranged",
+    "amount": 2,
+    "every_ms": 2000
+   },
+   "flavour": "Cheeks full of ammunition.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      10,
+      -8,
+      0
+     ],
+     "size": [
+      22,
+      22,
+      22
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      10,
+      4,
+      0
+     ],
+     "size": [
+      26,
+      10,
+      26
+     ],
+     "colour": "mud"
+    }
+   ]
+  },
+  {
+   "id": "bunny_ears",
+   "name": "Bunny Ears",
+   "socket": "head",
+   "colour": "body",
+   "tier": 1,
+   "mods": {
+    "ranged_less": 1
+   },
+   "flavour": "Hearing: it knows where the shot comes from.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      -4,
+      50,
+      26
+     ],
+     "size": [
+      22,
+      92,
+      12
+     ],
+     "rot": [
+      -14,
+      0,
+      6
+     ],
+     "colour": "body",
+     "mirror": true
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      0,
+      50,
+      26
+     ],
+     "size": [
+      12,
+      70,
+      6
+     ],
+     "rot": [
+      -14,
+      0,
+      6
+     ],
+     "colour": "blush",
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "shell",
+   "name": "Shell",
+   "socket": "back",
+   "colour": "snailshell",
+   "tier": 1,
+   "mods": {
+    "melee_less": 1
+   },
+   "flavour": "A house that goes where you go.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      -24,
+      0,
+      0
+     ],
+     "size": [
+      110,
+      100,
+      96
+     ]
+    },
+    {
+     "mesh": "ring",
+     "at": [
+      -24,
+      0,
+      0
+     ],
+     "size": [
+      70,
+      20,
+      70
+     ],
+     "rot": [
+      0,
+      0,
+      70
+     ],
+     "colour": "accent"
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      -30,
+      18,
+      0
+     ],
+     "size": [
+      40,
+      40,
+      46
+     ],
+     "colour": "accent"
+    }
+   ]
+  },
+  {
+   "id": "carapace",
+   "name": "Carapace",
+   "socket": "back",
+   "colour": "chitin",
+   "tier": 2,
+   "mods": {
+    "melee_less": 1,
+    "ranged_less": 1
+   },
+   "flavour": "Plates that meet in a seam.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      -4,
+      -4,
+      0
+     ],
+     "size": [
+      140,
+      70,
+      120
+     ]
+    },
+    {
+     "mesh": "cube",
+     "at": [
+      -4,
+      30,
+      0
+     ],
+     "size": [
+      110,
+      6,
+      4
+     ],
+     "colour": "accent"
+    }
+   ]
+  },
+  {
+   "id": "thick_skull",
+   "name": "Thick Skull",
+   "socket": "head",
+   "colour": "bone",
+   "tier": 3,
+   "mods": {
+    "melee_less": 2
+   },
+   "flavour": "Bites glance off it.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      20,
+      10,
+      0
+     ],
+     "size": [
+      60,
+      26,
+      56
+     ]
+    },
+    {
+     "mesh": "cube",
+     "at": [
+      20,
+      14,
+      0
+     ],
+     "size": [
+      50,
+      6,
+      10
+     ],
+     "colour": "accent"
+    }
+   ]
+  },
+  {
+   "id": "thick_fur",
+   "name": "Thick Fur",
+   "socket": "back",
+   "colour": "body",
+   "tier": 1,
+   "mods": {
+    "max_hp": 6
+   },
+   "flavour": "More of it to get through.",
+   "model": [
+    {
+     "mesh": "blob",
+     "at": [
+      -20,
+      -6,
+      0
+     ],
+     "size": [
+      80,
+      50,
+      80
+     ],
+     "colour": "body"
+    },
+    {
+     "mesh": "blob",
+     "at": [
+      10,
+      -2,
+      24
+     ],
+     "size": [
+      54,
+      40,
+      50
+     ],
+     "colour": "body"
+    },
+    {
+     "mesh": "blob",
+     "at": [
+      10,
+      -2,
+      -24
+     ],
+     "size": [
+      54,
+      40,
+      50
+     ],
+     "colour": "body"
+    },
+    {
+     "mesh": "blob",
+     "at": [
+      -40,
+      -30,
+      0
+     ],
+     "size": [
+      50,
+      40,
+      60
+     ],
+     "colour": "accent"
+    }
+   ]
+  },
+  {
+   "id": "lucky_feet",
+   "name": "Lucky Feet",
+   "socket": "legs",
+   "colour": "body",
+   "tier": 1,
+   "action": {
+    "kind": "evade",
+    "amount": 1,
+    "every_ms": 5000
+   },
+   "flavour": "Each hop a little luckier.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      30,
+      0,
+      36
+     ],
+     "size": [
+      56,
+      20,
+      28
+     ],
+     "colour": "body",
+     "mirror": true
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      -24,
+      4,
+      36
+     ],
+     "size": [
+      40,
+      24,
+      30
+     ],
+     "colour": "body",
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "tail_fan",
+   "name": "Tail Fan",
+   "socket": "tail",
+   "colour": "crabshell",
+   "tier": 3,
+   "action": {
+    "kind": "evade",
+    "amount": 2,
+    "every_ms": 6000
+   },
+   "flavour": "One flick and it is somewhere else.",
+   "model": [
+    {
+     "mesh": "cube",
+     "at": [
+      -14,
+      0,
+      0
+     ],
+     "size": [
+      30,
+      22,
+      30
+     ]
+    },
+    {
+     "mesh": "wedge",
+     "at": [
+      -40,
+      -4,
+      0
+     ],
+     "size": [
+      40,
+      8,
+      60
+     ],
+     "rot": [
+      0,
+      -90,
+      0
+     ]
+    },
+    {
+     "mesh": "wedge",
+     "at": [
+      -36,
+      -4,
+      24
+     ],
+     "size": [
+      30,
+      8,
+      30
+     ],
+     "rot": [
+      0,
+      -60,
+      0
+     ]
+    },
+    {
+     "mesh": "wedge",
+     "at": [
+      -36,
+      -4,
+      -24
+     ],
+     "size": [
+      30,
+      8,
+      30
+     ],
+     "rot": [
+      0,
+      -120,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "wings",
+   "name": "Wings",
+   "socket": "back",
+   "colour": "wing",
+   "tier": 1,
+   "mods": {
+    "evasion_per_empty": 3
+   },
+   "flavour": "Light bodies fly best.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      -14,
+      18,
+      52
+     ],
+     "size": [
+      70,
+      6,
+      100
+     ],
+     "rot": [
+      -24,
+      10,
+      0
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      -30,
+      10,
+      46
+     ],
+     "size": [
+      46,
+      5,
+      70
+     ],
+     "rot": [
+      -10,
+      30,
+      0
+     ],
+     "colour": "silk",
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "long_legs",
+   "name": "Long Legs",
+   "socket": "legs",
+   "colour": "chitin",
+   "tier": 2,
+   "mods": {
+    "haste": 15
+   },
+   "flavour": "Every part of it moves sooner.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      30,
+      -4,
+      40
+     ],
+     "size": [
+      6,
+      60,
+      6
+     ],
+     "rot": [
+      45,
+      0,
+      -15
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cyl",
+     "at": [
+      0,
+      -4,
+      44
+     ],
+     "size": [
+      6,
+      62,
+      6
+     ],
+     "rot": [
+      48,
+      0,
+      0
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cyl",
+     "at": [
+      -30,
+      -4,
+      40
+     ],
+     "size": [
+      6,
+      60,
+      6
+     ],
+     "rot": [
+      45,
+      0,
+      15
+     ],
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "antennae",
+   "name": "Antennae",
+   "socket": "head",
+   "colour": "chitin",
+   "tier": 1,
+   "mods": {
+    "evasion": 4
+   },
+   "flavour": "It feels the swing coming.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      12,
+      30,
+      14
+     ],
+     "size": [
+      5,
+      70,
+      5
+     ],
+     "rot": [
+      -15,
+      0,
+      -25
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      28,
+      62,
+      24
+     ],
+     "size": [
+      12,
+      12,
+      12
+     ],
+     "colour": "accent",
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "id": "slime_coat",
+   "name": "Slime Coat",
+   "socket": "back",
+   "colour": "slime",
+   "tier": 1,
+   "action": {
+    "kind": "guard",
+    "amount": 3,
+    "every_ms": 6000
+   },
+   "flavour": "Hard to get a grip on.",
+   "model": [
+    {
+     "mesh": "blob",
+     "at": [
+      -10,
+      -10,
+      0
+     ],
+     "size": [
+      120,
+      50,
+      110
+     ]
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      20,
+      -30,
+      40
+     ],
+     "size": [
+      16,
+      24,
+      16
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      -30,
+      -36,
+      30
+     ],
+     "size": [
+      14,
+      22,
+      14
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bushy_tail",
+   "name": "Bushy Tail",
+   "socket": "tail",
+   "colour": "body",
+   "tier": 3,
+   "action": {
+    "kind": "guard",
+    "amount": 2,
+    "every_ms": 4000
+   },
+   "flavour": "A shield it can sit on.",
+   "model": [
+    {
+     "mesh": "blob",
+     "at": [
+      -24,
+      34,
+      0
+     ],
+     "size": [
+      54,
+      96,
+      50
+     ],
+     "rot": [
+      0,
+      0,
+      30
+     ],
+     "colour": "body"
+    },
+    {
+     "mesh": "blob",
+     "at": [
+      -34,
+      76,
+      0
+     ],
+     "size": [
+      40,
+      40,
+      40
+     ],
+     "colour": "accent"
+    }
+   ]
+  },
+  {
+   "id": "mossy_hide",
+   "name": "Mossy Hide",
+   "socket": "back",
+   "colour": "moss",
+   "tier": 2,
+   "action": {
+    "kind": "heal",
+    "amount": 1,
+    "every_ms": 3000
+   },
+   "flavour": "Something green keeps growing on it.",
+   "model": [
+    {
+     "mesh": "blob",
+     "at": [
+      -10,
+      4,
+      20
+     ],
+     "size": [
+      60,
+      24,
+      50
+     ]
+    },
+    {
+     "mesh": "blob",
+     "at": [
+      16,
+      0,
+      -18
+     ],
+     "size": [
+      50,
+      20,
+      44
+     ]
+    },
+    {
+     "mesh": "blob",
+     "at": [
+      -30,
+      -6,
+      -20
+     ],
+     "size": [
+      40,
+      20,
+      40
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      0,
+      18,
+      4
+     ],
+     "size": [
+      10,
+      20,
+      10
+     ],
+     "colour": "mushroom"
+    }
+   ]
+  },
+  {
+   "id": "spines",
+   "name": "Spines",
+   "socket": "back",
+   "colour": "quill",
+   "tier": 2,
+   "mods": {
+    "thorns": 1
+   },
+   "flavour": "Biting it hurts.",
+   "model": [
+    {
+     "mesh": "cone",
+     "at": [
+      -40,
+      0,
+      0
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      0,
+      0,
+      40
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -20,
+      14,
+      0
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      0,
+      0,
+      25
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      0,
+      18,
+      0
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      0,
+      0,
+      10
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      20,
+      14,
+      0
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      0,
+      0,
+      -10
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -30,
+      6,
+      26
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      30,
+      0,
+      30
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -10,
+      12,
+      26
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      30,
+      0,
+      15
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      10,
+      12,
+      26
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      30,
+      0,
+      0
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -30,
+      6,
+      -26
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      -30,
+      0,
+      30
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      -10,
+      12,
+      -26
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      -30,
+      0,
+      15
+     ]
+    },
+    {
+     "mesh": "cone",
+     "at": [
+      10,
+      12,
+      -26
+     ],
+     "size": [
+      7,
+      34,
+      7
+     ],
+     "rot": [
+      -30,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "whiskers",
+   "name": "Whiskers",
+   "socket": "mouth",
+   "colour": "ink",
+   "tier": 3,
+   "mods": {
+    "evasion": 3,
+    "melee_more": 1
+   },
+   "flavour": "It always knows where the gap is.",
+   "model": [
+    {
+     "mesh": "cyl",
+     "at": [
+      4,
+      4,
+      20
+     ],
+     "size": [
+      2,
+      50,
+      2
+     ],
+     "rot": [
+      -80,
+      0,
+      10
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "cyl",
+     "at": [
+      4,
+      -4,
+      20
+     ],
+     "size": [
+      2,
+      50,
+      2
+     ],
+     "rot": [
+      -100,
+      0,
+      10
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      14,
+      0,
+      0
+     ],
+     "size": [
+      14,
+      12,
+      14
+     ],
+     "colour": "ink"
+    }
+   ]
+  },
+  {
+   "id": "night_eyes",
+   "name": "Night Eyes",
+   "socket": "head",
+   "colour": "beak",
+   "tier": 3,
+   "mods": {
+    "ranged_more": 1,
+    "evasion": 2
+   },
+   "flavour": "It sees in the dark and aims there.",
+   "model": [
+    {
+     "mesh": "sphere",
+     "at": [
+      30,
+      4,
+      22
+     ],
+     "size": [
+      30,
+      30,
+      30
+     ],
+     "mirror": true
+    },
+    {
+     "mesh": "sphere",
+     "at": [
+      42,
+      4,
+      24
+     ],
+     "size": [
+      12,
+      16,
+      14
+     ],
+     "colour": "ink",
+     "mirror": true
+    }
+   ]
+  }
+ ]
+}

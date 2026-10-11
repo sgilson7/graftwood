@@ -1,0 +1,21 @@
+{
+ "_about": "Every colour, as hex. The look follows Sam_Comm_final.png: a warm yellow sky, salmon and coral, sage and teal greens, flat fills, and one plum ink round everything. light_dir points toward the sun in hundredths; fog_range is metres from the eye.",
+ "scene": {"sky": "EFC46A", "fog": "F2D58A", "light": "FFF3D6", "ink": "3B2340"},
+ "light_dir": [-40, 85, 45],
+ "fog_range": [18, 70],
+ "colours": {
+  "ink": "3B2340", "cream": "EBC592", "bone": "FBF4E4", "blush": "F08A8A",
+  "grass": "8DBB7E", "grassdark": "6FA77A", "grasslight": "A9C97F", "pine": "5E9C6A", "teal": "4FA3A5",
+  "clearing": "B9CF86", "dirt": "D3A77D", "dirtdark": "B98A64", "stone": "A8B0A4", "stonedark": "7F8C88",
+  "trunk": "B9835A", "trunkdark": "8C5A44", "coral": "E88A73", "salmon": "EE9F7E", "rose": "E47A7E", "peach": "F0B07E",
+  "cloud": "F6E3A8", "hill": "C9C078", "hillfar": "E3C483",
+  "mushroom": "F26B38", "silk": "F6E7C4", "flower": "FF6F91", "flowergold": "FFB000",
+  "fur": "C98A55", "mud": "B9835A", "chitin": "6B4E71", "goldbelt": "F2B53A", "crabshell": "D2463C",
+  "slime": "9CD08F", "tongue": "F08A8A", "quill": "E3CC98", "antler": "E2C79A", "beak": "FFB000",
+  "wing": "CDE8E0", "sage": "8DBB7E", "moss": "6FA77A", "wood": "A8693C",
+  "snailshell": "E99A6A", "snailbody": "D9C7A0", "grey": "9AA3A0", "ant": "9B3D3D", "spider": "4F4460",
+  "crab": "E06D4F", "crayfish": "D9765F", "frog": "7FB069", "hedgehog": "8C6A50", "fox": "E07A3E",
+  "owl": "A47C4C", "badger": "6E6478", "squirrel": "C9604F", "mantis": "A9C97F", "lobster": "B3262E",
+  "stag": "A8693C", "poison": "9BE05A", "glowheal": "FFE38A", "hit": "FFFFFF"
+ }
+}

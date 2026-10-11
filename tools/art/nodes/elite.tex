@@ -1,0 +1,67 @@
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{xcolor}
+% Palette: Sam_Comm_final.png by eye, and the woods' own colours.
+\definecolor{ink}{HTML}{3B2340}
+\definecolor{sky}{HTML}{EFC46A}
+\definecolor{skyhi}{HTML}{F5DA92}
+\definecolor{skylow}{HTML}{E9B060}
+\definecolor{cloud}{HTML}{F2D58A}
+\definecolor{dusk}{HTML}{E99A6A}
+\definecolor{duskhi}{HTML}{F0B07E}
+\definecolor{dusklow}{HTML}{C9746A}
+\definecolor{coral}{HTML}{E88A73}
+\definecolor{salmon}{HTML}{EE9F7E}
+\definecolor{rose}{HTML}{E47A7E}
+\definecolor{peach}{HTML}{F0B07E}
+\definecolor{grass}{HTML}{8DBB7E}
+\definecolor{grassdark}{HTML}{6FA77A}
+\definecolor{grasslight}{HTML}{A9C97F}
+\definecolor{pine}{HTML}{5E9C6A}
+\definecolor{teal}{HTML}{4FA3A5}
+\definecolor{farpine}{HTML}{B7C98A}
+\definecolor{hill}{HTML}{C9C078}
+\definecolor{hillfar}{HTML}{E3C483}
+\definecolor{clearing}{HTML}{B9CF86}
+\definecolor{dirt}{HTML}{D3A77D}
+\definecolor{dirtdark}{HTML}{B98A64}
+\definecolor{stone}{HTML}{A8B0A4}
+\definecolor{trunk}{HTML}{B9835A}
+\definecolor{trunkdark}{HTML}{8C5A44}
+\definecolor{mushroom}{HTML}{F26B38}
+\definecolor{silk}{HTML}{F6E7C4}
+\definecolor{flower}{HTML}{FF6F91}
+\definecolor{flowergold}{HTML}{FFB000}
+\definecolor{leafgold}{HTML}{F2B53A}
+\definecolor{mud}{HTML}{B9835A}
+\definecolor{muddark}{HTML}{8C5A44}
+\definecolor{cream}{HTML}{EBC592}
+\definecolor{blush}{HTML}{F08A8A}
+\definecolor{bone}{HTML}{FBF4E4}
+\definecolor{crabshell}{HTML}{D2463C}
+\definecolor{crabdark}{HTML}{A8323A}
+\definecolor{wing}{HTML}{CDE8E0}
+\definecolor{goldbelt}{HTML}{F2B53A}
+\definecolor{stag}{HTML}{A8693C}
+\definecolor{stagdark}{HTML}{7E4A2C}
+\definecolor{antler}{HTML}{E2C79A}
+\definecolor{moss}{HTML}{6FA77A}
+\definecolor{eyeglow}{HTML}{FFE38A}
+\definecolor{chitin}{HTML}{6B4E71}
+\definecolor{chitinhi}{HTML}{8E6E94}
+\definecolor{acorn}{HTML}{C98A55}
+\definecolor{acorncap}{HTML}{8C5A44}
+\definecolor{fire}{HTML}{FF8A3D}
+\definecolor{firehi}{HTML}{FFE38A}
+\definecolor{jar}{HTML}{CDE8E0}
+\definecolor{white}{HTML}{FFFFFF}
+\begin{document}
+\begin{tikzpicture}
+\clip (0,0) rectangle (4,4);
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=chitin] plot[smooth cycle, tension=0.3] coordinates {(2.402,2.548) (3.027,3.043) (2.922,3.54) (2.978,3.56) (3.273,2.957) (2.698,2.252)};
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=chitin] plot[smooth cycle, tension=0.3] coordinates {(1.302,2.252) (0.727,2.957) (1.022,3.56) (1.078,3.54) (0.973,3.043) (1.598,2.548)};
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=chitin] (2,1.75) circle (1.15);
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=crabshell] (2.2,1.9) -- (2.85,2.2) -- (2.75,1.55) -- cycle;
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=crabshell] (1.8,1.9) -- (1.15,2.2) -- (1.25,1.55) -- cycle;
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=ink] plot[smooth cycle, tension=0.3] coordinates {(1.55,1) (2.45,1) (2.25,0.75) (1.75,0.75)};
+\end{tikzpicture}
+\end{document}

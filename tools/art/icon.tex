@@ -1,0 +1,84 @@
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{xcolor}
+% Palette: Sam_Comm_final.png by eye, and the woods' own colours.
+\definecolor{ink}{HTML}{3B2340}
+\definecolor{sky}{HTML}{EFC46A}
+\definecolor{skyhi}{HTML}{F5DA92}
+\definecolor{skylow}{HTML}{E9B060}
+\definecolor{cloud}{HTML}{F2D58A}
+\definecolor{dusk}{HTML}{E99A6A}
+\definecolor{duskhi}{HTML}{F0B07E}
+\definecolor{dusklow}{HTML}{C9746A}
+\definecolor{coral}{HTML}{E88A73}
+\definecolor{salmon}{HTML}{EE9F7E}
+\definecolor{rose}{HTML}{E47A7E}
+\definecolor{peach}{HTML}{F0B07E}
+\definecolor{grass}{HTML}{8DBB7E}
+\definecolor{grassdark}{HTML}{6FA77A}
+\definecolor{grasslight}{HTML}{A9C97F}
+\definecolor{pine}{HTML}{5E9C6A}
+\definecolor{teal}{HTML}{4FA3A5}
+\definecolor{farpine}{HTML}{B7C98A}
+\definecolor{hill}{HTML}{C9C078}
+\definecolor{hillfar}{HTML}{E3C483}
+\definecolor{clearing}{HTML}{B9CF86}
+\definecolor{dirt}{HTML}{D3A77D}
+\definecolor{dirtdark}{HTML}{B98A64}
+\definecolor{stone}{HTML}{A8B0A4}
+\definecolor{trunk}{HTML}{B9835A}
+\definecolor{trunkdark}{HTML}{8C5A44}
+\definecolor{mushroom}{HTML}{F26B38}
+\definecolor{silk}{HTML}{F6E7C4}
+\definecolor{flower}{HTML}{FF6F91}
+\definecolor{flowergold}{HTML}{FFB000}
+\definecolor{leafgold}{HTML}{F2B53A}
+\definecolor{mud}{HTML}{B9835A}
+\definecolor{muddark}{HTML}{8C5A44}
+\definecolor{cream}{HTML}{EBC592}
+\definecolor{blush}{HTML}{F08A8A}
+\definecolor{bone}{HTML}{FBF4E4}
+\definecolor{crabshell}{HTML}{D2463C}
+\definecolor{crabdark}{HTML}{A8323A}
+\definecolor{wing}{HTML}{CDE8E0}
+\definecolor{goldbelt}{HTML}{F2B53A}
+\definecolor{stag}{HTML}{A8693C}
+\definecolor{stagdark}{HTML}{7E4A2C}
+\definecolor{antler}{HTML}{E2C79A}
+\definecolor{moss}{HTML}{6FA77A}
+\definecolor{eyeglow}{HTML}{FFE38A}
+\definecolor{chitin}{HTML}{6B4E71}
+\definecolor{chitinhi}{HTML}{8E6E94}
+\definecolor{acorn}{HTML}{C98A55}
+\definecolor{acorncap}{HTML}{8C5A44}
+\definecolor{fire}{HTML}{FF8A3D}
+\definecolor{firehi}{HTML}{FFE38A}
+\definecolor{jar}{HTML}{CDE8E0}
+\definecolor{white}{HTML}{FFFFFF}
+\begin{document}
+\begin{tikzpicture}
+\clip (0,0) rectangle (4,4);
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=wing] plot[smooth cycle, tension=0.55] coordinates {(2.378,2.729) (2.294,2.787) (2.15,2.796) (1.959,2.755) (1.741,2.669) (1.516,2.546) (1.307,2.398) (1.134,2.24) (1.014,2.086) (0.959,1.952) (0.974,1.851) (1.058,1.793) (1.202,1.784) (1.393,1.825) (1.611,1.911) (1.836,2.034) (2.045,2.182) (2.218,2.34) (2.338,2.494) (2.393,2.628)};
+\draw[ink, line width=0.432pt, line cap=round, line join=round] (1.126,1.947) -- (2.226,2.633);
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=wing] plot[smooth cycle, tension=0.55] coordinates {(2.059,2.237) (2.015,2.301) (1.916,2.345) (1.773,2.367) (1.599,2.364) (1.412,2.335) (1.229,2.285) (1.069,2.218) (0.948,2.14) (0.876,2.059) (0.861,1.983) (0.905,1.919) (1.004,1.875) (1.147,1.853) (1.321,1.856) (1.508,1.885) (1.691,1.935) (1.851,2.002) (1.972,2.08) (2.044,2.161)};
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=goldbelt] plot[smooth cycle, tension=0.3] coordinates {(1.546,1.353) (1.07,1.324) (0.601,1.283) (0.591,1.31) (0.986,1.6) (1.446,1.787)};
+\draw[ink, line width=0.864pt, line cap=round, line join=round] (1.244,1.642) -- (1.158,1.296);
+\draw[ink, line width=0.864pt, line cap=round, line join=round] (0.992,1.566) -- (0.906,1.246);
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=muddark] plot[smooth cycle, tension=0.55] coordinates {(1.906,0.936) (1.895,0.968) (1.862,0.996) (1.811,1.018) (1.747,1.032) (1.676,1.037) (1.605,1.032) (1.541,1.018) (1.49,0.996) (1.457,0.968) (1.446,0.936) (1.457,0.905) (1.49,0.877) (1.541,0.855) (1.605,0.841) (1.676,0.836) (1.747,0.841) (1.811,0.855) (1.862,0.877) (1.895,0.905)};
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=muddark] plot[smooth cycle, tension=0.55] coordinates {(2.605,0.936) (2.593,0.968) (2.558,0.996) (2.504,1.018) (2.436,1.032) (2.36,1.037) (2.284,1.032) (2.216,1.018) (2.162,0.996) (2.127,0.968) (2.115,0.936) (2.127,0.905) (2.162,0.877) (2.216,0.855) (2.284,0.841) (2.36,0.836) (2.436,0.841) (2.504,0.855) (2.558,0.877) (2.593,0.905)};
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=mud] plot[smooth cycle, tension=0.55] coordinates {(1.924,2.469) (1.884,2.601) (1.834,2.717) (1.779,2.805) (1.724,2.857) (1.676,2.867) (1.638,2.835) (1.615,2.764) (1.607,2.66) (1.618,2.535) (1.644,2.399) (1.684,2.267) (1.734,2.151) (1.789,2.063) (1.844,2.011) (1.892,2.001) (1.93,2.033) (1.953,2.104) (1.961,2.208) (1.95,2.333)};
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=mud] (2,1.642) circle (0.72);
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=cream] plot[smooth cycle, tension=0.55] coordinates {(2.662,1.426) (2.641,1.537) (2.577,1.638) (2.478,1.717) (2.354,1.768) (2.216,1.786) (2.078,1.768) (1.954,1.717) (1.855,1.638) (1.791,1.537) (1.77,1.426) (1.791,1.315) (1.855,1.214) (1.954,1.135) (2.078,1.084) (2.216,1.066) (2.354,1.084) (2.478,1.135) (2.577,1.214) (2.641,1.315)};
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=mud] plot[smooth cycle, tension=0.55] coordinates {(2.247,2.502) (2.281,2.672) (2.296,2.83) (2.291,2.959) (2.265,3.048) (2.222,3.087) (2.166,3.073) (2.102,3.006) (2.036,2.895) (1.976,2.748) (1.926,2.582) (1.892,2.412) (1.877,2.254) (1.882,2.125) (1.908,2.036) (1.951,1.997) (2.007,2.011) (2.071,2.078) (2.137,2.189) (2.197,2.336)};
+\filldraw[draw=ink, line width=1.32pt, line join=round, fill=blush] plot[smooth cycle, tension=0.55] coordinates {(2.167,2.507) (2.193,2.627) (2.21,2.736) (2.215,2.825) (2.21,2.885) (2.193,2.909) (2.166,2.895) (2.133,2.846) (2.097,2.764) (2.06,2.66) (2.027,2.542) (2.001,2.422) (1.984,2.313) (1.978,2.224) (1.984,2.164) (2.001,2.14) (2.027,2.154) (2.06,2.203) (2.097,2.285) (2.134,2.389)};
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=bone] (2.396,1.894) circle (0.216);
+\fill[ink] (2.448,1.903) circle (0.091);
+\fill[white] (2.478,1.937) circle (0.026);
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=ink] plot[smooth cycle, tension=0.4] coordinates {(2.446,1.57) (2.706,1.613) (2.662,1.44) (2.504,1.426)};
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=bone] (2.504,1.512) -- (2.569,1.512) -- (2.569,1.592) -- (2.504,1.592) -- cycle;
+\filldraw[draw=ink, line width=1.1pt, line join=round, fill=bone] (2.59,1.52) -- (2.655,1.52) -- (2.655,1.599) -- (2.59,1.599) -- cycle;
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=crabshell] plot[smooth cycle, tension=0.3] coordinates {(2.387,1.548) (2.746,1.584) (2.996,1.62) (3.02,1.448) (2.766,1.412) (2.405,1.376)};
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=crabshell] plot[smooth cycle, tension=0.5] coordinates {(3,1.427) (3.334,1.398) (3.593,1.59) (3.434,1.664) (3.04,1.616)};
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=crabshell] plot[smooth cycle, tension=0.5] coordinates {(2.998,1.646) (3.32,1.688) (3.499,1.917) (3.226,1.89) (2.938,1.781)};
+\filldraw[draw=ink, line width=2.2pt, line join=round, fill=crabdark] (2.982,1.614) circle (0.173);
+\end{tikzpicture}
+\end{document}

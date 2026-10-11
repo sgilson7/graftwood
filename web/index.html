@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Reference default. connect-src 'self' keeps fetches on this origin;
+       'wasm-unsafe-eval' lets the page compile its own WebAssembly module;
+       form-action 'none' blocks form posts. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Graftwood</title>
+  <meta name="description" content="A 3D auto-battling roguelike in the browser: walk a branching path through the woods, fight bugs, crustaceans and woodland creatures, and graft their body parts onto your own.">
+  <link rel="icon" href="art/icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-ready="false" data-mode="loading">
+  <canvas id="view"></canvas>
+
+  <!-- the title -->
+  <div id="title" class="overlay" hidden>
+    <img class="art" src="art/title.png" alt="">
+    <div class="title-block">
+      <h1 data-copy="title"></h1>
+      <p class="subtitle" data-copy="subtitle"></p>
+      <button id="begin" class="big" data-copy="begin"></button>
+      <p class="record" id="record"></p>
+      <details class="how">
+        <summary data-copy="how_heading"></summary>
+        <ul id="how"></ul>
+      </details>
+      <p class="credit"><span data-copy="credit"></span> <span class="build" id="build"></span></p>
+    </div>
+  </div>
+
+  <!-- choosing a starter -->
+  <div id="choose" class="screen" hidden>
+    <section class="panel left">
+      <h2 data-copy="choose_heading"></h2>
+      <p class="hint" data-copy="choose_hint"></p>
+      <div id="starters"></div>
+      <button id="choose-go" class="big" data-copy="choose_go"></button>
+    </section>
+  </div>
+
+  <!-- the map -->
+  <div id="map" class="screen" hidden>
+    <section class="panel left map-panel">
+      <h2 data-copy="map_heading"></h2>
+      <p class="hint" data-copy="map_hint"></p>
+      <div id="graph">
+        <svg id="edges" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+        <div id="nodes"></div>
+      </div>
+      <button id="abandon" class="small" data-copy="abandon"></button>
+    </section>
+  </div>
+
+  <!-- the creature sheet, beside every screen between fights -->
+  <aside id="sheet" class="panel right" hidden>
+    <div class="sheet-head">
+      <h3 id="s-name"></h3>
+      <div class="floor"><span data-copy="floor"></span> <span id="s-floor"></span></div>
+    </div>
+    <div class="bar health"><div class="fill" id="s-hp-fill"></div><span id="s-hp"></span></div>
+    <div class="stats">
+      <div><span class="k" data-copy="acorns"></span><span class="v" id="s-acorns"></span></div>
+      <div><span class="k" data-copy="mass"></span><span class="v slots" id="s-slots"></span></div>
+      <div><span class="k" data-copy="slow"></span><span class="v" id="s-slow"></span></div>
+      <div><span class="k" data-copy="evasion"></span><span class="v" id="s-evasion"></span></div>
+    </div>
+    <div id="s-parts" class="cards compact"></div>
+  </aside>
+
+  <!-- a fight -->
+  <div id="battle" class="screen" hidden>
+    <div id="fighters">
+      <section class="fighter" id="f0"></section>
+      <div id="fight-mid">
+        <div class="foe-kind" id="b-kind"></div>
+        <div class="clock" id="b-clock"></div>
+        <div id="speeds"><span class="label" data-copy="speed"></span></div>
+        <button id="skip" class="small" data-copy="skip"></button>
+        <div class="fatigue" id="b-fatigue" data-copy="fatigue_note" hidden></div>
+      </div>
+      <section class="fighter foe" id="f1"></section>
+    </div>
+    <div id="floaters"></div>
+    <div id="result" hidden>
+      <div class="word" id="r-word"></div>
+      <button id="conclude" class="big" data-copy="continue"></button>
+    </div>
+  </div>
+
+  <!-- after a win -->
+  <div id="reward" class="screen" hidden>
+    <section class="panel left">
+      <h2 id="w-heading"></h2>
+      <p id="w-acorns"></p>
+      <button id="reward-hp" class="big"></button>
+      <p id="w-room"></p>
+      <div id="w-parts" class="cards"></div>
+      <button id="reward-skip" class="small" data-copy="reward_skip"></button>
+    </section>
+  </div>
+
+  <!-- an encounter on the path -->
+  <div id="encounter" class="screen" hidden>
+    <section class="panel left">
+      <img class="panel-art" src="art/encounter.png" alt="">
+      <div class="tag" id="e-tag"></div>
+      <h2 id="e-name"></h2>
+      <p id="e-text"></p>
+      <ul id="e-lines"></ul>
+      <button id="encounter-done" class="big"></button>
+    </section>
+  </div>
+
+  <!-- the trader -->
+  <div id="shop" class="screen" hidden>
+    <section class="panel left">
+      <img class="panel-art" src="art/shop.png" alt="">
+      <h2 data-copy="shop_heading"></h2>
+      <p class="hint" data-copy="shop_text"></p>
+      <div id="o-offers" class="cards"></div>
+      <button id="shop-mass"></button>
+      <button id="shop-heal"></button>
+      <p id="o-shed-label"></p>
+      <div id="o-shed" class="shed-list"></div>
+      <button id="shop-leave" class="big" data-copy="shop_leave"></button>
+    </section>
+  </div>
+
+  <!-- a rest -->
+  <div id="rest" class="screen" hidden>
+    <section class="panel left">
+      <img class="panel-art" src="art/rest.png" alt="">
+      <h2 data-copy="rest_heading"></h2>
+      <p class="hint" data-copy="rest_text"></p>
+      <button id="rest-heal" class="big"></button>
+      <button id="rest-grow" class="big"></button>
+    </section>
+  </div>
+
+  <!-- a part with no room for it -->
+  <div id="graft" class="screen" hidden>
+    <section class="panel left">
+      <h2 id="g-heading"></h2>
+      <p class="hint" data-copy="graft_text"></p>
+      <div id="g-part" class="cards"></div>
+      <div id="g-mine" class="cards"></div>
+      <button id="graft-decline" class="small" data-copy="graft_decline"></button>
+    </section>
+  </div>
+
+  <!-- the end of a run -->
+  <div id="end" class="overlay" hidden>
+    <img class="art" id="end-art" src="art/won.png" alt="">
+    <div class="end-block">
+      <h1 id="x-heading"></h1>
+      <p id="x-text"></p>
+      <ul id="x-stats"></ul>
+      <button id="to-title" class="big" data-copy="to_title"></button>
+    </div>
+  </div>
+
+  <div id="message"></div>
+  <div id="sound-hint" data-copy="sound_hint"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

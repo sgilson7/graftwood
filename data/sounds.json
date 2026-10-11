@@ -1,0 +1,348 @@
+{
+ "_about": "Every number the page's sound needs (the page holds none of its own). Each recipe is a list of layers: an oscillator sweeping `from` to `to` Hz, or the core's white noise through a filter. Times are in seconds after the sound starts. `gaps` is the least time between two plays of the same sound.",
+ "master": 0.5,
+ "floor": 0.0001,
+ "tail": 0.05,
+ "noise_seconds": 1,
+ "seed": 2026,
+ "gap": 0.04,
+ "gaps": {
+  "bite": 0.06,
+  "thwack": 0.06,
+  "poison": 0.1
+ },
+ "recipes": {
+  "click": [
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 660,
+    "to": 520,
+    "at": 0,
+    "attack": 0.003,
+    "dur": 0.06,
+    "gain": 0.12
+   }
+  ],
+  "step": [
+   {
+    "type": "noise",
+    "filter": "lowpass",
+    "freq": 900,
+    "q": 0.8,
+    "at": 0,
+    "attack": 0.004,
+    "dur": 0.12,
+    "gain": 0.25
+   },
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 180,
+    "to": 120,
+    "at": 0,
+    "attack": 0.004,
+    "dur": 0.1,
+    "gain": 0.1
+   }
+  ],
+  "bite": [
+   {
+    "type": "noise",
+    "filter": "bandpass",
+    "freq": 1800,
+    "q": 1.6,
+    "at": 0,
+    "attack": 0.002,
+    "dur": 0.07,
+    "gain": 0.35
+   },
+   {
+    "type": "osc",
+    "wave": "square",
+    "from": 300,
+    "to": 90,
+    "at": 0,
+    "attack": 0.002,
+    "dur": 0.06,
+    "gain": 0.06
+   }
+  ],
+  "thwack": [
+   {
+    "type": "noise",
+    "filter": "highpass",
+    "freq": 2600,
+    "q": 0.9,
+    "at": 0,
+    "attack": 0.002,
+    "dur": 0.09,
+    "gain": 0.22
+   },
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 900,
+    "to": 300,
+    "at": 0,
+    "attack": 0.002,
+    "dur": 0.08,
+    "gain": 0.06
+   }
+  ],
+  "dodge": [
+   {
+    "type": "noise",
+    "filter": "bandpass",
+    "freq": 1200,
+    "q": 3,
+    "at": 0,
+    "attack": 0.01,
+    "dur": 0.18,
+    "gain": 0.18
+   },
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 500,
+    "to": 1200,
+    "at": 0,
+    "attack": 0.01,
+    "dur": 0.14,
+    "gain": 0.05
+   }
+  ],
+  "sting": [
+   {
+    "type": "osc",
+    "wave": "sawtooth",
+    "from": 1400,
+    "to": 700,
+    "at": 0,
+    "attack": 0.002,
+    "dur": 0.08,
+    "gain": 0.05
+   },
+   {
+    "type": "noise",
+    "filter": "highpass",
+    "freq": 4000,
+    "q": 1,
+    "at": 0,
+    "attack": 0.002,
+    "dur": 0.05,
+    "gain": 0.12
+   }
+  ],
+  "poison": [
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 240,
+    "to": 180,
+    "at": 0,
+    "attack": 0.01,
+    "dur": 0.16,
+    "gain": 0.08
+   },
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 360,
+    "to": 260,
+    "at": 0.04,
+    "attack": 0.01,
+    "dur": 0.14,
+    "gain": 0.05
+   }
+  ],
+  "heal": [
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 520,
+    "to": 780,
+    "at": 0,
+    "attack": 0.01,
+    "dur": 0.22,
+    "gain": 0.09
+   },
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 780,
+    "to": 1040,
+    "at": 0.08,
+    "attack": 0.01,
+    "dur": 0.2,
+    "gain": 0.06
+   }
+  ],
+  "guard": [
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 220,
+    "to": 200,
+    "at": 0,
+    "attack": 0.003,
+    "dur": 0.14,
+    "gain": 0.12
+   },
+   {
+    "type": "noise",
+    "filter": "lowpass",
+    "freq": 600,
+    "q": 1,
+    "at": 0,
+    "attack": 0.003,
+    "dur": 0.08,
+    "gain": 0.15
+   }
+  ],
+  "hop": [
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 400,
+    "to": 900,
+    "at": 0,
+    "attack": 0.005,
+    "dur": 0.12,
+    "gain": 0.08
+   }
+  ],
+  "thorn": [
+   {
+    "type": "noise",
+    "filter": "bandpass",
+    "freq": 3200,
+    "q": 4,
+    "at": 0,
+    "attack": 0.002,
+    "dur": 0.06,
+    "gain": 0.2
+   }
+  ],
+  "fatigue": [
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 160,
+    "to": 110,
+    "at": 0,
+    "attack": 0.02,
+    "dur": 0.25,
+    "gain": 0.08
+   }
+  ],
+  "win": [
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 523,
+    "to": 523,
+    "at": 0,
+    "attack": 0.01,
+    "dur": 0.16,
+    "gain": 0.12
+   },
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 659,
+    "to": 659,
+    "at": 0.12,
+    "attack": 0.01,
+    "dur": 0.16,
+    "gain": 0.12
+   },
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 784,
+    "to": 784,
+    "at": 0.24,
+    "attack": 0.01,
+    "dur": 0.4,
+    "gain": 0.14
+   }
+  ],
+  "lose": [
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 392,
+    "to": 380,
+    "at": 0,
+    "attack": 0.01,
+    "dur": 0.25,
+    "gain": 0.12
+   },
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 311,
+    "to": 300,
+    "at": 0.2,
+    "attack": 0.01,
+    "dur": 0.25,
+    "gain": 0.12
+   },
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 262,
+    "to": 200,
+    "at": 0.4,
+    "attack": 0.01,
+    "dur": 0.6,
+    "gain": 0.12
+   }
+  ],
+  "graft": [
+   {
+    "type": "noise",
+    "filter": "lowpass",
+    "freq": 700,
+    "q": 1.2,
+    "at": 0,
+    "attack": 0.01,
+    "dur": 0.25,
+    "gain": 0.3
+   },
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 200,
+    "to": 500,
+    "at": 0.05,
+    "attack": 0.01,
+    "dur": 0.25,
+    "gain": 0.1
+   }
+  ],
+  "buy": [
+   {
+    "type": "osc",
+    "wave": "square",
+    "from": 880,
+    "to": 880,
+    "at": 0,
+    "attack": 0.002,
+    "dur": 0.05,
+    "gain": 0.05
+   },
+   {
+    "type": "osc",
+    "wave": "square",
+    "from": 1320,
+    "to": 1320,
+    "at": 0.06,
+    "attack": 0.002,
+    "dur": 0.09,
+    "gain": 0.05
+   }
+  ]
+ }
+}
