@@ -1,5 +1,5 @@
 {
- "_about": "The path's random encounters: exactly as many good as bad (good: true or false), dealt so every two in a run hold one of each. Outcomes: mass (+ or −; a part that no longer fits falls off), gain_part (a random part up to a tier), lose_part (a random part), max_hp, heal, heal_full, hurt (never below 1 health), acorns.",
+ "_about": "The path's random encounters: exactly as many good as bad (good: true or false), dealt so every two in a run hold one of each. Outcomes: mass (+ or −; a part that no longer fits falls off), gain_part (a random part up to a tier, or a wild part, for the player to place), lose_part (a random part), lose_bag_part (a random part from the bag), upgrade_part (the player picks a part to raise a level), downgrade_part (a random part loses a level), forage (+ or −, to the forage bar), max_hp, heal, heal_full, hurt (never below 1 health), acorns.",
  "encounters": [
   {"id": "mossy_hollow", "name": "Mossy Hollow", "good": true,
    "text": "You curl up in a hollow log lined with moss. When you crawl out you are bigger than you went in.",
@@ -36,6 +36,24 @@
    "outcomes": [{"kind": "acorns", "amount": -20}]},
   {"id": "nettles", "name": "Nettle Patch", "good": false,
    "text": "Nettles, as far as you can see. You go through them anyway.",
-   "outcomes": [{"kind": "hurt", "amount": 9}]}
+   "outcomes": [{"kind": "hurt", "amount": 9}]},
+  {"id": "old_grafter", "name": "The Old Grafter", "good": true,
+   "text": "A beetle older than the trees sits on a stump with a needle of thorn. It offers to work on one of your parts.",
+   "outcomes": [{"kind": "upgrade_part"}]},
+  {"id": "strange_spores", "name": "Strange Spores", "good": true,
+   "text": "A puff of glowing spores settles on you, and something new starts to grow.",
+   "outcomes": [{"kind": "gain_part", "tier": 2, "wild": true}]},
+  {"id": "berry_bush", "name": "A Berry Bush", "good": true,
+   "text": "A bush so heavy with berries it bends to the ground. You eat, and save the rest.",
+   "outcomes": [{"kind": "forage", "amount": 40}]},
+  {"id": "blight", "name": "Grey Blight", "good": false,
+   "text": "A grey dust blows off a dead tree and settles into one of your parts.",
+   "outcomes": [{"kind": "downgrade_part"}]},
+  {"id": "packrat", "name": "A Packrat", "good": false,
+   "text": "While you sleep, a packrat goes through your bag and runs off with something.",
+   "outcomes": [{"kind": "lose_bag_part"}]},
+  {"id": "raided_cache", "name": "Raided Stores", "good": false,
+   "text": "Something found where you hid your forage and ate most of it.",
+   "outcomes": [{"kind": "forage", "amount": -40}]}
  ]
 }

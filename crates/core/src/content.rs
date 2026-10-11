@@ -57,7 +57,10 @@ pub struct Action {
 }
 
 /// The passive modifiers a part may carry. Each is a whole number.
-pub const MOD_NAMES: [&str; 9] = [
+/// `regen` is tenths of health a second in a fight; `toxic` poisons whatever bites;
+/// `poison_less` takes stacks off each dose of poison; `head_slots` is the
+/// extra slot Two-Headed grows, which only a head part can fill.
+pub const MOD_NAMES: [&str; 13] = [
     "ranged_less",
     "melee_less",
     "evasion",
@@ -67,7 +70,14 @@ pub const MOD_NAMES: [&str; 9] = [
     "haste",
     "ranged_more",
     "melee_more",
+    "regen",
+    "toxic",
+    "poison_less",
+    "head_slots",
 ];
+
+/// The one modifier an upgrade leaves alone: a second head is a second head.
+pub const UNSCALED_MOD: &str = "head_slots";
 
 /// The sockets on a body a part can sit in.
 pub const SOCKETS: [&str; 6] = ["mouth", "head", "back", "legs", "tail", "side"];
@@ -111,11 +121,51 @@ pub struct Part {
     pub model: Vec<Prim>,
     /// 0 for parts no shop sells
     pub tier: i32,
+    /// the set it counts toward (a `rules.json` set id), or "" for a wild part
+    #[serde(default)]
+    pub set: String,
+    /// takes no slot of its own (Two-Headed)
+    #[serde(default)]
+    pub slotless: bool,
+}
+
+/// A number scaled to an upgrade level: each level adds `pct` percent of the
+/// base, at least 1, and a positive number never falls below 1.
+pub fn scaled(base: i32, level: i32, pct: i32) -> i32 {
+    if base <= 0 || level == 0 {
+        return base;
+    }
+    let step = ((base * pct + 99) / 100).max(1);
+    (base + level * step).max(1)
 }
 
 impl Part {
+    /// The modifier at level 0.
     pub fn modifier(&self, name: &str) -> i32 {
         self.mods.get(name).copied().unwrap_or(0)
+    }
+
+    /// The modifier at an upgrade level.
+    pub fn modifier_at(&self, name: &str, level: i32, u: &UpgradeRules) -> i32 {
+        let base = self.modifier(name);
+        if name == UNSCALED_MOD {
+            return base;
+        }
+        scaled(base, level, u.amount_pct)
+    }
+
+    /// The action at an upgrade level: a bigger amount and a shorter timer.
+    pub fn action_at(&self, level: i32, u: &UpgradeRules) -> Option<Action> {
+        self.action.as_ref().map(|a| Action {
+            kind: a.kind,
+            amount: scaled(a.amount, level, u.amount_pct),
+            every_ms: (a.every_ms * (100 - level * u.faster_pct) / 100).max(1),
+        })
+    }
+
+    /// Whether an upgrade changes anything about it.
+    pub fn can_upgrade(&self) -> bool {
+        self.action.is_some() || self.mods.keys().any(|k| k != UNSCALED_MOD)
     }
 }
 
@@ -135,19 +185,45 @@ pub struct CreatureDef {
     /// a line shown before the fight, or under a starter
     #[serde(default)]
     pub blurb: String,
+    /// its kind: a `rules.json` set id
+    pub set: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case", tag = "kind")]
 pub enum Outcome {
-    Mass { amount: i32 },
-    GainPart { tier: i32 },
+    Mass {
+        amount: i32,
+    },
+    /// a part found: from the woods' pool up to a tier, or a wild part
+    GainPart {
+        tier: i32,
+        #[serde(default)]
+        wild: bool,
+    },
     LosePart,
-    MaxHp { amount: i32 },
-    Heal { amount: i32 },
+    /// a part from the bag, if anything is in it
+    LoseBagPart,
+    /// the player picks one of their parts to raise a level
+    UpgradePart,
+    /// a random part loses a level
+    DowngradePart,
+    Forage {
+        amount: i32,
+    },
+    MaxHp {
+        amount: i32,
+    },
+    Heal {
+        amount: i32,
+    },
     HealFull,
-    Hurt { amount: i32 },
-    Acorns { amount: i32 },
+    Hurt {
+        amount: i32,
+    },
+    Acorns {
+        amount: i32,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
@@ -175,7 +251,40 @@ pub struct ShopRules {
     pub mass_price: i32,
     pub heal_price: i32,
     pub heal_amount: i32,
-    pub shed_price: i32,
+}
+
+/// What an upgrade does: each level adds `amount_pct` percent of a part's
+/// numbers (at least 1) and takes `faster_pct` percent off its timer.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct UpgradeRules {
+    pub amount_pct: i32,
+    pub faster_pct: i32,
+    pub max_level: i32,
+    pub min_level: i32,
+}
+
+/// The forage bar: each won battle's forage adds a roll in `per_forage`;
+/// at `full` the player may cultivate one unit of mass.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct ForageRules {
+    pub full: i32,
+    pub per_forage: [i32; 2],
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct SetBonus {
+    /// parts of the set on the body needed
+    pub count: i32,
+    pub mods: BTreeMap<String, i32>,
+}
+
+/// A kind of creature. Parts of one set on one body earn its bonus: the
+/// highest bonus whose count is reached.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct SetDef {
+    pub id: String,
+    pub colour: String,
+    pub bonuses: Vec<SetBonus>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
@@ -191,6 +300,8 @@ pub struct CombatRules {
     pub fatigue_every_ms: i32,
     pub fatigue_growth_ms: i32,
     pub max_fight_ms: i32,
+    /// the most health regeneration can restore in a second, in whole health
+    pub regen_cap: i32,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
@@ -215,6 +326,11 @@ pub struct RunRules {
     pub starters: Vec<String>,
     pub shop: ShopRules,
     pub combat: CombatRules,
+    /// how many parts the bag holds; a part in the bag does nothing
+    pub bag_size: usize,
+    pub upgrade: UpgradeRules,
+    pub forage: ForageRules,
+    pub sets: Vec<SetDef>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
@@ -354,6 +470,12 @@ impl Content {
             if p.action.is_none() && p.mods.is_empty() {
                 return Err(format!("part {}: does nothing", p.id));
             }
+            if !p.set.is_empty() && self.set_index(&p.set).is_none() {
+                return Err(format!("part {}: no set {}", p.id, p.set));
+            }
+            if p.slotless && p.modifier(UNSCALED_MOD) <= 0 {
+                return Err(format!("part {}: a slotless part must grow a slot", p.id));
+            }
             for m in &p.model {
                 if Mesh::from_name(&m.mesh).is_none() {
                     return Err(format!("part {}: no mesh {}", p.id, m.mesh));
@@ -367,13 +489,16 @@ impl Content {
             }
         }
         for c in &self.creatures {
-            if c.parts.len() as i32 > c.mass {
-                return Err(format!("creature {}: more parts than mass", c.id));
-            }
             for p in &c.parts {
                 if self.part_index(p).is_none() {
                     return Err(format!("creature {}: no part {p}", c.id));
                 }
+            }
+            if !crate::creature::Creature::from_def(self, c).fits(self) {
+                return Err(format!("creature {}: more parts than mass", c.id));
+            }
+            if self.set_index(&c.set).is_none() {
+                return Err(format!("creature {}: no set {}", c.id, c.set));
             }
             for k in [&c.body, &c.accent] {
                 if !self.palette.colours.contains_key(k) {
@@ -399,7 +524,26 @@ impl Content {
                 return Err(format!("encounter {}: no outcome", e.id));
             }
         }
+        for set in &self.rules.sets {
+            if !self.palette.colours.contains_key(&set.colour) {
+                return Err(format!("set {}: no colour {}", set.id, set.colour));
+            }
+            for b in &set.bonuses {
+                for k in b.mods.keys() {
+                    if !MOD_NAMES.contains(&k.as_str()) {
+                        return Err(format!("set {}: no modifier {k}", set.id));
+                    }
+                }
+            }
+        }
+        if self.rules.bag_size == 0 {
+            return Err("rules: the bag holds at least one part".to_string());
+        }
         Ok(())
+    }
+
+    pub fn set_index(&self, id: &str) -> Option<usize> {
+        self.rules.sets.iter().position(|s| s.id == id)
     }
 
     pub fn part_index(&self, id: &str) -> Option<usize> {
@@ -527,6 +671,91 @@ pub(crate) mod tests {
         for k in c.creatures.iter().filter(|k| k.tier >= 1 && k.tier <= 3) {
             assert!((2..=4).contains(&k.parts.len()), "{}", k.id);
         }
+    }
+
+    #[test]
+    fn every_creature_and_every_part_but_the_wild_ones_belongs_to_a_set() {
+        let c = content();
+        for k in &c.creatures {
+            assert!(c.set_index(&k.set).is_some(), "{}", k.id);
+        }
+        let wild: Vec<&str> = c
+            .parts
+            .iter()
+            .filter(|p| p.set.is_empty())
+            .map(|p| p.id.as_str())
+            .collect();
+        let mut want = [
+            "fungal_antenna",
+            "third_eye",
+            "opposable_thumb",
+            "prehensile_tail",
+            "eye_stalk",
+            "fur_patch",
+            "two_headed",
+        ];
+        let mut got = wild.clone();
+        want.sort();
+        got.sort();
+        assert_eq!(got, want);
+        let names: Vec<&str> = c.rules.sets.iter().map(|s| s.id.as_str()).collect();
+        assert_eq!(names, ["bug", "rodent", "beast", "critter"]);
+    }
+
+    #[test]
+    fn the_playtest_creatures_are_in_the_woods_with_two_or_three_parts_of_their_own() {
+        let c = content();
+        let ids = [
+            "frog",
+            "salmon",
+            "bear",
+            "bee_swarm",
+            "anthill",
+            "squirrel",
+            "skunk",
+            "possum",
+            "hawk",
+            "turkey",
+            "deer",
+            "jackrabbit",
+            "unicorn",
+            "dragon_hatchling",
+            "snake",
+            "snail",
+            "turtle",
+            "duck",
+            "swan",
+        ];
+        for id in ids {
+            let k = &c.creatures[c.creature_index(id).unwrap_or_else(|| panic!("no {id}"))];
+            assert!((1..=3).contains(&k.tier), "{id} is met in the woods");
+            // a part of its own: carried by no other creature, and not wild
+            let own = k
+                .parts
+                .iter()
+                .filter(|p| !c.parts[c.part_index(p).unwrap()].set.is_empty())
+                .filter(|p| c.creatures.iter().filter(|o| o.parts.contains(p)).count() == 1)
+                .count();
+            assert!((2..=3).contains(&own), "{id} has {own} parts of its own");
+        }
+    }
+
+    #[test]
+    fn an_upgrade_raises_a_parts_numbers_and_shortens_its_timer() {
+        let c = content();
+        let u = &c.rules.upgrade;
+        let teeth = &c.parts[c.part_index("teeth").unwrap()];
+        let up = teeth.action_at(1, u).unwrap();
+        // 2 damage: half of 2 is 1, so 3; 2 s less a tenth is 1.8 s
+        assert_eq!((up.amount, up.every_ms), (3, 1800));
+        let down = teeth.action_at(-1, u).unwrap();
+        assert_eq!((down.amount, down.every_ms), (1, 2200));
+        let fur = &c.parts[c.part_index("thick_fur").unwrap()];
+        assert_eq!(fur.modifier_at("max_hp", 2, u), 12);
+        let two = &c.parts[c.part_index("two_headed").unwrap()];
+        assert_eq!(two.modifier_at("head_slots", 3, u), 1, "a head is a head");
+        assert!(!two.can_upgrade());
+        assert_eq!(scaled(1, -1, 50), 1, "a positive number stays at least 1");
     }
 
     #[test]

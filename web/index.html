@@ -66,9 +66,25 @@
       <div><span class="k" data-copy="mass"></span><span class="v slots" id="s-slots"></span></div>
       <div><span class="k" data-copy="slow"></span><span class="v" id="s-slow"></span></div>
       <div><span class="k" data-copy="evasion"></span><span class="v" id="s-evasion"></span></div>
+      <div><span class="k" data-copy="regen"></span><span class="v" id="s-regen"></span></div>
     </div>
+    <div class="forage-row">
+      <img class="ui-icon" src="art/ui/forage.png" alt="">
+      <span class="k" data-copy="forage"></span>
+      <div class="bar forage"><div class="fill" id="s-forage-fill"></div><span id="s-forage"></span></div>
+    </div>
+    <button id="cultivate" class="small" data-copy="cultivate" hidden></button>
+    <div id="s-sets" class="sets"></div>
+    <p class="hint small-hint" data-copy="drag_hint"></p>
     <div id="s-parts" class="cards compact"></div>
+    <div class="bag-head"><img class="ui-icon" src="art/ui/bag.png" alt=""><h4 data-copy="bag"></h4></div>
+    <p class="hint small-hint" data-copy="bag_hint"></p>
+    <div id="s-bag" class="cards compact bag"></div>
+    <div id="s-bin" class="bin"><img class="ui-icon" src="art/ui/bin.png" alt=""><span><b data-copy="bin"></b> · <span data-copy="bin_hint"></span></span></div>
   </aside>
+
+  <!-- where a dragged part can be dropped onto the creature in the clearing -->
+  <div id="creature-zone"><span data-copy="drop_creature"></span></div>
 
   <!-- a fight -->
   <div id="battle" class="screen" hidden>
@@ -95,10 +111,15 @@
     <section class="panel left">
       <h2 id="w-heading"></h2>
       <p id="w-acorns"></p>
+      <div class="forage-box">
+        <img class="ui-icon" src="art/ui/forage.png" alt="">
+        <button id="reward-forage"></button>
+        <p id="w-forage"></p>
+      </div>
       <button id="reward-hp" class="big"></button>
       <p id="w-room"></p>
       <div id="w-parts" class="cards"></div>
-      <button id="reward-skip" class="small" data-copy="reward_skip"></button>
+      <button id="reward-done" class="big"></button>
     </section>
   </div>
 
@@ -110,6 +131,13 @@
       <h2 id="e-name"></h2>
       <p id="e-text"></p>
       <ul id="e-lines"></ul>
+      <div id="e-found" class="cards"></div>
+      <div id="e-upgrade" hidden>
+        <h3 data-copy="upgrade_heading"></h3>
+        <p class="hint" data-copy="upgrade_hint"></p>
+        <div id="e-stump" class="stump"><img src="art/ui/stump.png" alt=""><span data-copy="upgrade_stump"></span></div>
+        <div id="e-choices" class="cards"></div>
+      </div>
       <button id="encounter-done" class="big"></button>
     </section>
   </div>
@@ -123,8 +151,6 @@
       <div id="o-offers" class="cards"></div>
       <button id="shop-mass"></button>
       <button id="shop-heal"></button>
-      <p id="o-shed-label"></p>
-      <div id="o-shed" class="shed-list"></div>
       <button id="shop-leave" class="big" data-copy="shop_leave"></button>
     </section>
   </div>
@@ -137,17 +163,6 @@
       <p class="hint" data-copy="rest_text"></p>
       <button id="rest-heal" class="big"></button>
       <button id="rest-grow" class="big"></button>
-    </section>
-  </div>
-
-  <!-- a part with no room for it -->
-  <div id="graft" class="screen" hidden>
-    <section class="panel left">
-      <h2 id="g-heading"></h2>
-      <p class="hint" data-copy="graft_text"></p>
-      <div id="g-part" class="cards"></div>
-      <div id="g-mine" class="cards"></div>
-      <button id="graft-decline" class="small" data-copy="graft_decline"></button>
     </section>
   </div>
 

@@ -4,8 +4,9 @@
 //! fight begins: the build decides it, and the seeded roll decides each dodge.
 //!
 //! Order inside one tick, so that a fight replays exactly: the player's parts
-//! in slot order, then the foe's; then poison; then fatigue; then deaths. Both
-//! falling on the same tick counts as the player's win.
+//! in slot order, then the foe's; then poison; then regeneration (once a
+//! second); then fatigue; then deaths. Both falling on the same tick counts as
+//! the player's win.
 
 use crate::content::{ActionKind, Content};
 use crate::creature::Creature;
@@ -42,6 +43,8 @@ pub enum Ev {
     Fatigue,
     /// damage soaked up by guard
     Blocked,
+    /// health come back by itself, once a second
+    Regen,
 }
 
 /// Something that happened to `side` on `tick`.
@@ -80,6 +83,11 @@ pub struct Fighter {
     ranged_more: i32,
     melee_more: i32,
     thorns: i32,
+    toxic: i32,
+    poison_less: i32,
+    /// tenths of health a second
+    pub regen: i32,
+    regen_tenths: i32,
     // for the picture: the tick each happened last
     pub fired_at: Vec<i32>,
     pub lunge_at: i32,
@@ -97,7 +105,7 @@ impl Fighter {
         let period: Vec<i32> = creature
             .parts
             .iter()
-            .map(|&p| match &c.parts[p].action {
+            .map(|g| match c.parts[g.part].action_at(g.level, &c.rules.upgrade) {
                 Some(a) => period_ticks(c, a.every_ms, slow, haste),
                 None => 0,
             })
@@ -119,6 +127,10 @@ impl Fighter {
             ranged_more: creature.sum(c, "ranged_more"),
             melee_more: creature.sum(c, "melee_more"),
             thorns: creature.sum(c, "thorns"),
+            toxic: creature.sum(c, "toxic"),
+            poison_less: creature.sum(c, "poison_less"),
+            regen: creature.regen(c),
+            regen_tenths: 0,
             creature: creature.clone(),
             lunge_at: LONG_AGO,
             hurt_at: LONG_AGO,
@@ -204,9 +216,19 @@ impl Fight {
         false
     }
 
+    /// Adds poison to `side`, less what it resists, up to the cap.
+    fn poison(&mut self, c: &Content, side: usize, amount: i32) {
+        let cap = c.rules.combat.poison_cap;
+        let f = &mut self.sides[side];
+        let before = f.poison;
+        f.poison = (f.poison + (amount - f.poison_less).max(0)).min(cap);
+        let added = f.poison - before;
+        self.note(side, Ev::Poisoned, added);
+    }
+
     fn fire(&mut self, c: &Content, side: usize, slot: usize) {
-        let part = self.sides[side].creature.parts[slot];
-        let Some(action) = c.parts[part].action.clone() else {
+        let g = self.sides[side].creature.parts[slot];
+        let Some(action) = c.parts[g.part].action_at(g.level, &c.rules.upgrade) else {
             return;
         };
         let foe = 1 - side;
@@ -250,14 +272,13 @@ impl Fight {
                     let back = self.wound(side, thorns);
                     self.note(side, Ev::Thorns, back);
                 }
+                let toxic = self.sides[foe].toxic;
+                if kind.is_melee() && toxic > 0 {
+                    self.poison(c, side, toxic);
+                }
             }
             ActionKind::Poison => {
-                let cap = c.rules.combat.poison_cap;
-                let f = &mut self.sides[foe];
-                let before = f.poison;
-                f.poison = (f.poison + action.amount).min(cap);
-                let added = f.poison - before;
-                self.note(foe, Ev::Poisoned, added);
+                self.poison(c, foe, action.amount);
             }
             ActionKind::Evade => {
                 self.sides[side].evasion_gained += action.amount;
@@ -314,6 +335,19 @@ impl Fight {
                 self.note(side, Ev::PoisonTick, stacks);
             }
         }
+        if self.tick % TICKS_PER_SECOND == 0 {
+            for side in [PLAYER, FOE] {
+                let f = &mut self.sides[side];
+                f.regen_tenths += f.regen;
+                let whole = f.regen_tenths / 10;
+                f.regen_tenths %= 10;
+                let healed = whole.min(f.max_hp - f.hp).max(0);
+                if f.alive() && healed > 0 {
+                    f.hp += healed;
+                    self.note(side, Ev::Regen, healed);
+                }
+            }
+        }
         let after = ms_to_ticks(r.fatigue_after_ms);
         let every = ms_to_ticks(r.fatigue_every_ms).max(1);
         if self.tick > after && (self.tick - after) % every == 0 {
@@ -363,6 +397,7 @@ impl Fight {
 mod tests {
     use super::*;
     use crate::content::tests::content;
+    use crate::creature::Graft;
 
     fn make(c: &Content, id: &str) -> Creature {
         Creature::from_def(c, &c.creatures[c.creature_index(id).unwrap()])
@@ -372,7 +407,10 @@ mod tests {
         Creature {
             name: "test".into(),
             mass,
-            parts: parts.iter().map(|p| c.part_index(p).unwrap()).collect(),
+            parts: parts
+                .iter()
+                .map(|p| Graft::new(c.part_index(p).unwrap()))
+                .collect(),
             base_hp: hp,
             body: "fur".into(),
             accent: "cream".into(),
@@ -522,6 +560,65 @@ mod tests {
         assert!(f.over());
         assert!(f.tick < ms_to_ticks(c.rules.combat.max_fight_ms));
         assert_eq!(f.winner, Some(PLAYER), "falling together is the player's win");
+    }
+
+    #[test]
+    fn regeneration_restores_health_once_a_second_up_to_the_cap() {
+        let c = content();
+        let post = bare(&c, &["thick_fur"], 3, 50);
+        // Shedding Skin: 0.3 health a second, so 1 at 4 s, and 3 by 10 s
+        let skin = bare(&c, &["shed_skin"], 3, 50);
+        let mut f = Fight::new(&c, &post, 50, &skin, 100, 1);
+        f.sides[FOE].hp = 30;
+        run_ticks(&mut f, &c, 239);
+        assert_eq!(f.sides[FOE].hp, 30);
+        f.step(&c);
+        assert_eq!(f.sides[FOE].hp, 31);
+        run_ticks(&mut f, &c, 360);
+        assert_eq!(f.sides[FOE].hp, 33, "three tenths a second");
+        let mut lots = bare(&c, &["shed_skin"; 6], 9, 50);
+        for g in &mut lots.parts {
+            g.level = 3;
+        }
+        let mut g = Fight::new(&c, &post, 50, &lots, 100, 1);
+        g.sides[FOE].hp = 30;
+        run_ticks(&mut g, &c, 60);
+        assert_eq!(
+            g.sides[FOE].hp, 33,
+            "six upgraded skins still heal only three a second"
+        );
+        run_ticks(&mut g, &c, 60 * 20);
+        assert_eq!(g.sides[FOE].hp, g.sides[FOE].max_hp, "never past full");
+    }
+
+    #[test]
+    fn toxic_skin_poisons_whatever_bites_it_and_grizzled_fur_resists_poison() {
+        let c = content();
+        let biter = bare(&c, &["teeth"], 3, 50);
+        let toad = bare(&c, &["toxic_skin"], 3, 50);
+        let mut f = Fight::new(&c, &biter, 50, &toad, 100, 1);
+        run_ticks(&mut f, &c, 120);
+        assert_eq!(f.sides[PLAYER].poison, 1, "the bite cost a stack of poison");
+        let wasp = bare(&c, &["stinger"], 3, 50);
+        let possum = bare(&c, &["grizzled_coat"], 3, 50);
+        let mut g = Fight::new(&c, &wasp, 50, &possum, 100, 1);
+        run_ticks(&mut g, &c, 240);
+        assert_eq!(g.sides[FOE].poison, 0, "one sting less one resisted");
+    }
+
+    #[test]
+    fn an_upgraded_part_hits_harder_and_sooner() {
+        let c = content();
+        let mut biter = bare(&c, &["teeth"], 3, 50);
+        biter.parts[0].level = 1;
+        let post = bare(&c, &["thick_fur"], 3, 50);
+        let mut f = Fight::new(&c, &biter, 50, &post, 100, 1);
+        let start = f.sides[FOE].hp;
+        // 1.8 s is 108 ticks
+        run_ticks(&mut f, &c, 107);
+        assert_eq!(f.sides[FOE].hp, start);
+        f.step(&c);
+        assert_eq!(f.sides[FOE].hp, start - 3);
     }
 
     #[test]

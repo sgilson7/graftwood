@@ -7,7 +7,7 @@ use gw_core::combat::{Fight, PLAYER};
 use gw_core::content::Content;
 use gw_core::creature::Creature;
 use gw_core::map::Kind;
-use gw_core::run::{Run, Stage};
+use gw_core::run::{Place, Run, Stage};
 
 fn load() -> Content {
     let r = |n: &str| std::fs::read_to_string(format!("data/{n}.json")).unwrap();
@@ -31,9 +31,38 @@ fn value(c: &Content, p: usize) -> i32 {
     v + part.mods.values().sum::<i32>() * 2
 }
 
+/// The body slot holding the weakest part, and its value.
+fn weakest(c: &Content, r: &Run) -> Option<(usize, i32)> {
+    r.me.parts
+        .iter()
+        .enumerate()
+        .map(|(i, g)| (i, value(c, g.part) + g.level * 3))
+        .min_by_key(|x| x.1)
+}
+
+/// Puts the offer at `i` on the body: into a free slot, or over the
+/// weakest part (which is then binned) when the offer is better.
+fn place(c: &Content, r: &mut Run, i: usize, part: usize) -> bool {
+    if r.move_part(c, Place::Offer(i), Place::Creature) {
+        return true;
+    }
+    match weakest(c, r) {
+        Some((slot, worst)) if value(c, part) > worst + 3 => {
+            r.bag.clear();
+            if r.move_part(c, Place::Offer(i), Place::Body(slot)) {
+                r.bag.clear();
+                return true;
+            }
+            false
+        }
+        _ => false,
+    }
+}
+
 fn play(c: &Content, starter: usize, seed: u64, smart: bool) -> (Stage, usize) {
     let mut r = Run::new(c, starter, seed);
     for _ in 0..400 {
+        r.cultivate(c);
         match r.stage.clone() {
             Stage::Map => {
                 let ch = r.choices();
@@ -79,12 +108,10 @@ fn play(c: &Content, starter: usize, seed: u64, smart: bool) -> (Stage, usize) {
                 r.conclude(c);
             }
             Stage::Reward { parts, .. } => {
+                r.reward_forage(c);
                 if smart {
                     let best = (0..parts.len()).max_by_key(|&i| value(c, parts[i])).unwrap();
-                    let worst = r.me.parts.iter().map(|&p| value(c, p)).min().unwrap_or(0);
-                    if r.me.has_room() || value(c, parts[best]) > worst + 3 {
-                        r.reward_part(c, best);
-                    } else {
+                    if !place(c, &mut r, best, parts[best]) {
                         r.reward_hp(c);
                     }
                 } else if seed.is_multiple_of(2) {
@@ -92,22 +119,35 @@ fn play(c: &Content, starter: usize, seed: u64, smart: bool) -> (Stage, usize) {
                 } else {
                     r.reward_part(c, parts.len() - 1);
                 }
+                r.reward_done();
             }
-            Stage::Encounter { .. } => {
-                r.encounter_done(c);
+            Stage::Encounter { found, .. } => {
+                if smart {
+                    if let Some(g) = found {
+                        place(c, &mut r, 0, g.part);
+                    }
+                    let best =
+                        r.me.parts
+                            .iter()
+                            .enumerate()
+                            .max_by_key(|(_, g)| value(c, g.part))
+                            .map(|(i, _)| i);
+                    if let Some(i) = best {
+                        r.move_part(c, Place::Body(i), Place::Upgrade);
+                    }
+                } else {
+                    r.encounter_take(c);
+                }
+                r.encounter_done();
             }
             Stage::Shop => {
                 if smart {
                     r.shop_mass(c);
                     while r.shop_heal(c) {}
                     for i in 0..3 {
-                        if r.me.has_room() {
-                            r.shop_buy(c, i);
-                        }
+                        let part = r.shop.as_ref().unwrap().offers[i].part;
+                        place(c, &mut r, i, part);
                     }
-                }
-                if let Stage::Graft { .. } = r.stage {
-                    r.graft_decline();
                 }
                 r.shop_leave();
             }
@@ -116,24 +156,6 @@ fn play(c: &Content, starter: usize, seed: u64, smart: bool) -> (Stage, usize) {
                     r.rest_grow(c);
                 } else {
                     r.rest_heal(c);
-                }
-            }
-            Stage::Graft { part, .. } => {
-                if smart {
-                    let (slot, worst) =
-                        r.me.parts
-                            .iter()
-                            .enumerate()
-                            .map(|(i, &p)| (i, value(c, p)))
-                            .min_by_key(|x| x.1)
-                            .unwrap();
-                    if value(c, part) > worst {
-                        r.graft_replace(c, slot);
-                    } else {
-                        r.graft_decline();
-                    }
-                } else {
-                    r.graft_replace(c, 0);
                 }
             }
             s @ (Stage::Dead | Stage::Won) => return (s, r.floor()),

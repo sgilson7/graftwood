@@ -13,7 +13,7 @@ with debris (here, leaves) flying.
 
     python3 tools/art.py            # every picture: web/art/**.png, tools/art/**.tex
     python3 tools/art.py title      # one picture
-    python3 tools/art.py nodes      # one folder
+    python3 tools/art.py nodes      # one folder (nodes, sets, ui)
 
 Facts each picture must get right (the list of what an image generator gets
 wrong), and where this file enforces each:
@@ -22,8 +22,10 @@ wrong), and where this file enforces each:
   the art. `document` refuses any TeX that could typeset text (\\node,
   \\text, \\put, \\char ...), so no picture can carry a letter.
 - sizes: title, won and dead are 1920x1080 and opaque; the panel pictures
-  (encounter, shop, rest) 1024x384 and opaque; each map icon 256x256 and the
-  page icon 128x128, both with a transparent background (`SIZE`; `check`
+  (encounter, shop, rest) 1024x384 and opaque; each map icon, set badge
+  (sets/: a beetle, a rodent's face, a paw, a frog's face) and interface
+  icon (ui/: forage, bag, bin, the grafter's stump) 256x256 and the page
+  icon 128x128, all with a transparent background (`SIZE`; `check`
   reads every PNG's header and refuses a wrong size, a missing alpha channel
   on a cutout, or a file over 1.5 MB).
 - the creature is the same creature everywhere: `chimera` draws it (a mud
@@ -37,7 +39,8 @@ wrong), and where this file enforces each:
 - icons read at 38 px: each map icon is one bold shape with a thick outline,
   centred, clear of every edge (`check`).
 - colour is never the only cue: every filled shape has the plum outline,
-  and each map icon is a different shape, not only a different colour.
+  and each map icon and set badge is a different shape, not only a
+  different colour; the page writes each set's name beside its badge.
 - repeatable: every random choice comes from a seeded generator, so the
   same script draws the same pictures.
 """
@@ -690,6 +693,109 @@ def icon_boss():
     return g, "nodes"
 
 
+def set_bug():
+    """The Bug set: a beetle seen from above, six legs and two feelers."""
+    g = Fig(ink=2.6)
+    for sy in (-0.55, 0.0, 0.55):
+        for sx in (1, -1):
+            limb(g, [(2.0, 1.75 + sy), (2.0 + sx * 1.05, 1.95 + sy * 1.3), (2.0 + sx * 1.35, 1.6 + sy * 1.5)], [0.16, 0.14, 0.08], "chitin")
+    for sx in (1, -1):
+        limb(g, [(2.0 + sx * 0.18, 3.05), (2.0 + sx * 0.55, 3.55), (2.0 + sx * 0.9, 3.6)], [0.1, 0.08, 0.05], "chitin")
+    g.ellipse(2.0, 1.6, 0.85, 1.15, "goldbelt")
+    g.stroke([(2.0, 2.65), (2.0, 0.5)], lw=2.0)
+    for sx in (1, -1):
+        g.circle(2.0 + sx * 0.4, 1.3, 0.16, "chitin", lw=0.6)
+    g.circle(2.0, 2.95, 0.42, "chitin")
+    return g, "nodes"
+
+
+def set_rodent():
+    """The Rodent set: a round face with big ears and two front teeth."""
+    g = Fig(ink=2.6)
+    for sx in (1, -1):
+        g.circle(2.0 + sx * 0.95, 2.85, 0.62, "acorn")
+        g.circle(2.0 + sx * 0.95, 2.85, 0.34, "blush", lw=0.6)
+    g.blob([(0.9, 2.2), (2.0, 3.0), (3.1, 2.2), (2.8, 1.0), (2.0, 0.55), (1.2, 1.0)], "acorn", tension=0.6)
+    g.ellipse(2.0, 1.25, 0.6, 0.45, "cream")
+    g.rect(1.82, 0.55, 1.99, 1.0, "bone", lw=0.6)
+    g.rect(2.01, 0.55, 2.18, 1.0, "bone", lw=0.6)
+    g.circle(2.0, 1.45, 0.14, "ink", outline=False)
+    for sx in (1, -1):
+        stare(g, 2.0 + sx * 0.48, 2.0, 0.2)
+    return g, "nodes"
+
+
+def set_beast():
+    """The Beast set: a big paw print."""
+    g = Fig(ink=2.6)
+    g.blob([(1.05, 1.5), (2.0, 2.25), (2.95, 1.5), (2.7, 0.75), (2.0, 0.55), (1.3, 0.75)], "stag", tension=0.6)
+    for x, y, r in ((0.85, 2.35, 0.38), (1.55, 3.05, 0.4), (2.45, 3.05, 0.4), (3.15, 2.35, 0.38)):
+        g.ellipse(x, y, r * 0.85, r, "stag")
+    for x, y in ((0.85, 2.7), (1.55, 3.45), (2.45, 3.45), (3.15, 2.7)):
+        g.poly([(x - 0.12, y), (x + 0.12, y), (x, y + 0.3)], "bone", lw=0.6)
+    return g, "nodes"
+
+
+def set_critter():
+    """The Critter set: a frog's face, eyes on top."""
+    g = Fig(ink=2.6)
+    g.blob([(0.55, 1.6), (2.0, 2.55), (3.45, 1.6), (3.0, 0.75), (2.0, 0.55), (1.0, 0.75)], "teal", tension=0.6)
+    for sx in (1, -1):
+        g.circle(2.0 + sx * 0.85, 2.55, 0.62, "teal")
+        stare(g, 2.0 + sx * 0.85, 2.6, 0.38)
+    g.stroke([(1.05, 1.3), (2.0, 0.95), (2.95, 1.3)], lw=2.0, smooth=True)
+    for sx in (1, -1):
+        g.circle(2.0 + sx * 0.25, 1.75, 0.07, "ink", outline=False)
+    return g, "nodes"
+
+
+def icon_forage():
+    """Foraging: a sprig of berries with two leaves."""
+    g = Fig(ink=2.6)
+    g.stroke([(1.0, 0.75), (1.8, 1.9), (2.4, 2.9), (2.9, 3.4)], lw=2.6, smooth=True, colour="trunkdark")
+    for x, y, rot in ((1.25, 2.6, 30), (3.05, 2.35, -35)):
+        with g.frame(x, y, 1.0, rot):
+            g.blob([(-0.75, 0), (0, 0.35), (0.75, 0), (0, -0.35)], "grassdark", tension=0.5)
+    for x, y, r in ((1.75, 1.35, 0.42), (2.45, 1.2, 0.4), (2.15, 1.85, 0.38), (2.85, 1.85, 0.34)):
+        g.circle(x, y, r, "rose")
+        g.circle(x - r * 0.35, y + r * 0.35, r * 0.18, "white", outline=False)
+    return g, "nodes"
+
+
+def icon_bag():
+    """The bag: a leaf satchel tied with a strap."""
+    g = Fig(ink=2.6)
+    g.stroke([(1.05, 2.3), (1.3, 3.35), (2.7, 3.35), (2.95, 2.3)], lw=3.0, smooth=True, colour="trunkdark")
+    g.blob([(0.75, 2.4), (3.25, 2.4), (3.1, 1.0), (2.0, 0.55), (0.9, 1.0)], "grasslight", tension=0.45)
+    g.blob([(0.8, 2.45), (3.2, 2.45), (2.8, 1.65), (2.0, 1.45), (1.2, 1.65)], "grassdark", tension=0.45)
+    g.circle(2.0, 1.6, 0.22, "acorn")
+    g.stroke([(2.0, 1.2), (2.0, 0.75)], lw=1.4, colour="grassdark")
+    return g, "nodes"
+
+
+def icon_bin():
+    """The bin: a hollow log a part is thrown into."""
+    g = Fig(ink=2.6)
+    g.blob([(0.7, 2.6), (3.0, 2.6), (3.35, 1.8), (3.0, 1.0), (0.7, 1.0)], "trunk", tension=0.3)
+    g.ellipse(0.85, 1.8, 0.42, 0.8, "trunkdark")
+    g.ellipse(0.85, 1.8, 0.24, 0.5, "ink", outline=False)
+    for y in (1.4, 2.2):
+        g.stroke([(1.6, y), (2.8, y)], lw=1.2, colour="trunkdark")
+    g.poly([(2.2, 2.72), (2.75, 3.25), (2.45, 3.25), (2.45, 3.6), (1.95, 3.6), (1.95, 3.25), (1.65, 3.25)], "salmon", lw=0.9)
+    return g, "nodes"
+
+
+def icon_stump():
+    """The old grafter's stump, with its needle of thorn stuck in the top."""
+    g = Fig(ink=2.6)
+    g.blob([(0.75, 0.75), (3.25, 0.75), (2.95, 1.2), (2.85, 2.3), (1.15, 2.3), (1.05, 1.2)], "trunk", tension=0.35)
+    g.ellipse(2.0, 2.3, 0.85, 0.32, "dirt")
+    g.ellipse(2.0, 2.3, 0.45, 0.16, "trunk", lw=0.6)
+    limb(g, [(2.3, 2.35), (2.75, 3.15), (3.0, 3.55)], [0.16, 0.1, 0.02], "bone")
+    sparkle(g, 1.25, 3.05, 0.36, "eyeglow")
+    return g, "nodes"
+
+
 def icon_page():
     """The page's icon: the creature, whole."""
     g = Fig(ink=2.2)
@@ -703,6 +809,8 @@ PICTURES = {
     "encounter": encounter, "shop": shop, "rest": rest,
     "nodes/battle": icon_battle, "nodes/elite": icon_elite, "nodes/encounter": icon_encounter,
     "nodes/shop": icon_shop, "nodes/rest": icon_rest, "nodes/boss": icon_boss,
+    "sets/bug": set_bug, "sets/rodent": set_rodent, "sets/beast": set_beast, "sets/critter": set_critter,
+    "ui/forage": icon_forage, "ui/bag": icon_bag, "ui/bin": icon_bin, "ui/stump": icon_stump,
     "icon": icon_page,
 }
 

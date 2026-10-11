@@ -8,7 +8,7 @@
 
 use crate::combat::{Fight, Fighter, Shot, FOE, PLAYER};
 use crate::content::{ActionKind, Content, Rgb};
-use crate::creature::Creature;
+use crate::creature::{Creature, Graft};
 use crate::fx::{self, deg, int, ratio, ONE};
 use crate::geom::{v3, Affine, V3};
 use crate::mesh::Mesh;
@@ -148,6 +148,22 @@ fn rotation(rot: [i32; 3]) -> Affine {
 
 /// Draws a creature from its body and parts.
 pub fn draw_creature(b: &mut Batch, c: &Content, k: &Creature, pos: V3, yaw: i32, p: &Pose) {
+    draw_creature_with(b, c, k, pos, yaw, p, None, 0);
+}
+
+/// Draws a creature, and `ghost` (a part being dragged over it) glowing in
+/// the slot it would take. `anim` makes the ghost breathe.
+#[allow(clippy::too_many_arguments)]
+pub fn draw_creature_with(
+    b: &mut Batch,
+    c: &Content,
+    k: &Creature,
+    pos: V3,
+    yaw: i32,
+    p: &Pose,
+    ghost: Option<Graft>,
+    anim: i32,
+) {
     let t = frame(k, pos, yaw, p);
     let flash = c.palette.get("hit");
     let tint = |rgb: Rgb| mix(rgb, flash, p.hurt * 6 / 10);
@@ -182,7 +198,7 @@ pub fn draw_creature(b: &mut Batch, c: &Content, k: &Creature, pos: V3, yaw: i32
         );
     }
     // a body with nothing in its legs socket still stands on four nubs
-    if !k.parts.iter().any(|&p| c.parts[p].socket == "legs") {
+    if !k.parts.iter().any(|g| c.parts[g.part].socket == "legs") {
         for (fx_, fz) in [(1, 1), (1, -1), (-1, 1), (-1, -1)] {
             let at = v3(h(fx_ * 38 * sx / 100), h(-86 * sy / 100), h(fz * 42 * sz / 100));
             b.inked(
@@ -192,10 +208,16 @@ pub fn draw_creature(b: &mut Batch, c: &Content, k: &Creature, pos: V3, yaw: i32
             );
         }
     }
-    // parts
+    // parts, then the ghost after them, where it would go
     let mut seen: Vec<&str> = Vec::new();
-    for (i, &pi) in k.parts.iter().enumerate() {
-        let part = &c.parts[pi];
+    let all: Vec<(Graft, bool)> = k
+        .parts
+        .iter()
+        .map(|g| (*g, false))
+        .chain(ghost.map(|g| (g, true)))
+        .collect();
+    for (i, &(g, is_ghost)) in all.iter().enumerate() {
+        let part = &c.parts[g.part];
         let kth = seen.iter().filter(|s| **s == part.socket.as_str()).count() as i32;
         seen.push(part.socket.as_str());
         let base = socket(&part.socket);
@@ -206,7 +228,13 @@ pub fn draw_creature(b: &mut Batch, c: &Content, k: &Creature, pos: V3, yaw: i32
             base[1] * sy / 100 + shift[1],
             base[2] * sz / 100 + shift[2],
         ];
-        let grow = ONE + fx::mul(p.pulses.get(i).copied().unwrap_or(0), ONE * 35 / 100);
+        // a part grows with each level, and swells as it acts
+        let breathe = if is_ghost {
+            fx::sin(anim * deg(9)) / 6 + ONE / 6
+        } else {
+            p.pulses.get(i).copied().unwrap_or(0)
+        };
+        let grow = ONE + g.level * ONE * 8 / 100 + fx::mul(breathe, ONE * 35 / 100);
         for m in &part.model {
             let mesh = Mesh::from_name(&m.mesh).unwrap_or(Mesh::Cube);
             let rgb = tint(colour_of(c, k, &m.colour, &part.colour));
@@ -232,7 +260,12 @@ pub fn draw_creature(b: &mut Batch, c: &Content, k: &Creature, pos: V3, yaw: i32
                 let local = Affine::translate(at)
                     .then(&rotation(rot))
                     .then(&Affine::scale(size));
-                b.inked(mesh, &t.then(&local), rgb);
+                if is_ghost {
+                    b.lit(mesh, &t.then(&local), rgb, ONE / 2);
+                    b.halo(mesh, &t.then(&local), c.palette.get("glowheal"), ONE * 6 / 10);
+                } else {
+                    b.inked(mesh, &t.then(&local), rgb);
+                }
             }
         }
     }
@@ -474,15 +507,15 @@ mod tests {
             let prims: usize = k
                 .parts
                 .iter()
-                .map(|&p| {
-                    c.parts[p]
+                .map(|g| {
+                    c.parts[g.part]
                         .model
                         .iter()
                         .map(|m| if m.mirror { 2 } else { 1 })
                         .sum::<usize>()
                 })
                 .sum();
-            let nubs = if k.parts.iter().any(|&p| c.parts[p].socket == "legs") {
+            let nubs = if k.parts.iter().any(|g| c.parts[g.part].socket == "legs") {
                 0
             } else {
                 4
@@ -490,6 +523,21 @@ mod tests {
             // body, belly, two eyes and any nubs inked; two pupils plain
             assert_eq!(b.count(), 2 * (4 + nubs + prims) + 2, "{}", d.id);
         }
+    }
+
+    #[test]
+    fn a_dragged_part_shows_on_the_body_as_a_glowing_ghost() {
+        let c = content();
+        let k = Creature::from_def(&c, &c.creatures[0]);
+        let pose = idle_pose(&k, 0);
+        let mut plain = Batch::new(c.palette.ink);
+        draw_creature(&mut plain, &c, &k, V3::ZERO, 0, &pose);
+        let horn = Graft::new(c.part_index("unicorn_horn").unwrap());
+        let mut ghosted = Batch::new(c.palette.ink);
+        draw_creature_with(&mut ghosted, &c, &k, V3::ZERO, 0, &pose, Some(horn), 0);
+        let prims = c.parts[horn.part].model.len();
+        // each ghost primitive is drawn lit (fill and ink) and haloed
+        assert_eq!(ghosted.count(), plain.count() + 3 * prims);
     }
 
     #[test]

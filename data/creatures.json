@@ -1,5 +1,5 @@
 {
- "_about": "Every creature. Tier 0 are the starters, 1 to 3 the woods by depth, 4 the boss. mass is how many body parts it can carry; hp its health before parts add to it; shape its body's proportions in percent (forward, up, across).",
+ "_about": "Every creature. Tier 0 are the starters, 1 to 3 the woods by depth, 4 the boss. mass is how many body parts it can carry; hp its health before parts add to it; shape its body's proportions in percent (forward, up, across). set is its kind: bug, rodent, beast or critter (rules.json sets).",
  "creatures": [
   {
    "id": "burrowling",
@@ -18,7 +18,8 @@
     "teeth",
     "thick_fur"
    ],
-   "blurb": "Sturdy and toothy. Bites, and takes a beating."
+   "blurb": "Sturdy and toothy. Bites, and takes a beating.",
+   "set": "rodent"
   },
   {
    "id": "flitterling",
@@ -37,7 +38,8 @@
     "stinger",
     "wings"
    ],
-   "blurb": "Light and hard to hit. Poisons, then waits."
+   "blurb": "Light and hard to hit. Poisons, then waits.",
+   "set": "bug"
   },
   {
    "id": "sprigling",
@@ -56,7 +58,8 @@
     "spore_cap",
     "slime_coat"
    ],
-   "blurb": "Fights from a distance behind a coat of slime."
+   "blurb": "Fights from a distance behind a coat of slime.",
+   "set": "critter"
   },
   {
    "id": "rabbit",
@@ -76,7 +79,8 @@
     "teeth",
     "lucky_feet"
    ],
-   "blurb": "Ears up, feet ready."
+   "blurb": "Ears up, feet ready.",
+   "set": "rodent"
   },
   {
    "id": "ant",
@@ -95,7 +99,8 @@
     "mandibles",
     "antennae"
    ],
-   "blurb": "Small, and not alone for long."
+   "blurb": "Small, and not alone for long.",
+   "set": "bug"
   },
   {
    "id": "wasp",
@@ -114,7 +119,8 @@
     "wings",
     "stinger"
    ],
-   "blurb": "Buzzing, and very sure of itself."
+   "blurb": "Buzzing, and very sure of itself.",
+   "set": "bug"
   },
   {
    "id": "beetle",
@@ -131,9 +137,10 @@
    ],
    "parts": [
     "mandibles",
-    "shell"
+    "carapace"
    ],
-   "blurb": "Slow, armoured, stubborn."
+   "blurb": "Slow, armoured, stubborn.",
+   "set": "bug"
   },
   {
    "id": "snail",
@@ -153,7 +160,8 @@
     "radula",
     "slime_coat"
    ],
-   "blurb": "It has all day."
+   "blurb": "It has all day.",
+   "set": "critter"
   },
   {
    "id": "mosquito",
@@ -172,7 +180,8 @@
     "proboscis",
     "wings"
    ],
-   "blurb": "Thirsty."
+   "blurb": "Thirsty.",
+   "set": "bug"
   },
   {
    "id": "spider",
@@ -191,7 +200,8 @@
     "fangs",
     "silk_spinneret"
    ],
-   "blurb": "Patient, eight-eyed, hungry."
+   "blurb": "Patient, eight-eyed, hungry.",
+   "set": "bug"
   },
   {
    "id": "crab",
@@ -211,7 +221,8 @@
     "carapace",
     "long_legs"
    ],
-   "blurb": "Sideways, and armoured all round."
+   "blurb": "Sideways, and armoured all round.",
+   "set": "bug"
   },
   {
    "id": "crayfish",
@@ -228,17 +239,18 @@
    ],
    "parts": [
     "pincer",
-    "shell",
+    "carapace",
     "antennae"
    ],
-   "blurb": "A crab that got lost in a creek."
+   "blurb": "A crab that got lost in a creek.",
+   "set": "bug"
   },
   {
    "id": "frog",
    "name": "Frog",
    "tier": 2,
    "mass": 3,
-   "hp": 11,
+   "hp": 9,
    "body": "frog",
    "accent": "cream",
    "shape": [
@@ -248,10 +260,11 @@
    ],
    "parts": [
     "sticky_tongue",
-    "long_legs",
-    "slime_coat"
+    "spring_legs",
+    "toxic_skin"
    ],
-   "blurb": "Damp, fast and sticky."
+   "blurb": "Bright, damp and poisonous to bite. Springs out of the way.",
+   "set": "critter"
   },
   {
    "id": "hedgehog",
@@ -271,7 +284,8 @@
     "teeth",
     "thick_fur"
    ],
-   "blurb": "Do not bite it."
+   "blurb": "Do not bite it.",
+   "set": "rodent"
   },
   {
    "id": "centipede",
@@ -291,7 +305,8 @@
     "long_legs",
     "mandibles"
    ],
-   "blurb": "Too many legs, all of them quick."
+   "blurb": "Too many legs, all of them quick.",
+   "set": "bug"
   },
   {
    "id": "fox",
@@ -312,7 +327,8 @@
     "whiskers",
     "claws"
    ],
-   "blurb": "Clever, quick, and fond of rabbits."
+   "blurb": "Clever, quick, and fond of rabbits.",
+   "set": "beast"
   },
   {
    "id": "owl",
@@ -333,7 +349,8 @@
     "night_eyes",
     "talons"
    ],
-   "blurb": "It watched you all the way here."
+   "blurb": "It watched you all the way here.",
+   "set": "critter"
   },
   {
    "id": "badger",
@@ -354,7 +371,8 @@
     "thick_fur",
     "teeth"
    ],
-   "blurb": "Short-tempered and built like a door."
+   "blurb": "Short-tempered and built like a door.",
+   "set": "beast"
   },
   {
    "id": "squirrel",
@@ -372,10 +390,11 @@
    "parts": [
     "acorn_toss",
     "bushy_tail",
-    "lucky_feet",
-    "teeth"
+    "cheek_pouches",
+    "lucky_feet"
    ],
-   "blurb": "Throws what it does not eat."
+   "blurb": "Throws what it does not eat.",
+   "set": "rodent"
   },
   {
    "id": "mantis",
@@ -395,7 +414,8 @@
     "wings",
     "antennae"
    ],
-   "blurb": "Still, then not."
+   "blurb": "Still, then not.",
+   "set": "bug"
   },
   {
    "id": "lobster",
@@ -416,14 +436,15 @@
     "tail_fan",
     "antennae"
    ],
-   "blurb": "Came up the river to see what all the noise was."
+   "blurb": "Came up the river to see what all the noise was.",
+   "set": "bug"
   },
   {
    "id": "old_stag",
    "name": "The Old Stag",
    "tier": 4,
    "mass": 7,
-   "hp": 55,
+   "hp": 36,
    "body": "stag",
    "accent": "cream",
    "shape": [
@@ -439,7 +460,346 @@
     "mossy_hide",
     "bunny_ears"
    ],
-   "blurb": "The wood's oldest body, carrying more than it should. Seven mass and six parts: every part of it is slow."
+   "blurb": "The wood's oldest body, carrying more than it should. Seven mass and six parts: every part of it is slow.",
+   "set": "beast"
+  },
+  {
+   "id": "bee_swarm",
+   "name": "Bee Swarm",
+   "tier": 1,
+   "mass": 3,
+   "hp": 6,
+   "body": "goldbelt",
+   "accent": "ink",
+   "shape": [
+    90,
+    80,
+    80
+   ],
+   "parts": [
+    "swarm",
+    "honeycomb"
+   ],
+   "blurb": "A knot of bees round their honey. Stings, and stings, and stings.",
+   "set": "bug"
+  },
+  {
+   "id": "duck",
+   "name": "Duck",
+   "tier": 1,
+   "mass": 3,
+   "hp": 9,
+   "body": "duck",
+   "accent": "cream",
+   "shape": [
+    110,
+    84,
+    90
+   ],
+   "parts": [
+    "duck_bill",
+    "webbed_feet",
+    "down_feathers"
+   ],
+   "blurb": "Waddles up as if it owns the pond. It does.",
+   "set": "critter"
+  },
+  {
+   "id": "salmon",
+   "name": "Salmon",
+   "tier": 2,
+   "mass": 3,
+   "hp": 9,
+   "body": "salmonfish",
+   "accent": "silver",
+   "shape": [
+    140,
+    70,
+    64
+   ],
+   "parts": [
+    "tail_fin",
+    "silver_scales",
+    "fins"
+   ],
+   "blurb": "A long way from the river, and furious about it.",
+   "set": "critter"
+  },
+  {
+   "id": "skunk",
+   "name": "Skunk",
+   "tier": 2,
+   "mass": 3,
+   "hp": 10,
+   "body": "skunk",
+   "accent": "bone",
+   "shape": [
+    110,
+    84,
+    90
+   ],
+   "parts": [
+    "stink_spray",
+    "warning_stripes",
+    "teeth"
+   ],
+   "blurb": "Its stripes are a warning. Heed them.",
+   "set": "critter"
+  },
+  {
+   "id": "possum",
+   "name": "Possum",
+   "tier": 2,
+   "mass": 4,
+   "hp": 9,
+   "body": "possum",
+   "accent": "bone",
+   "shape": [
+    116,
+    80,
+    86
+   ],
+   "parts": [
+    "play_dead",
+    "fifty_teeth",
+    "grizzled_coat",
+    "prehensile_tail"
+   ],
+   "blurb": "Hisses, grins with fifty teeth, and plays dead when it's losing.",
+   "set": "rodent"
+  },
+  {
+   "id": "jackrabbit",
+   "name": "Jackrabbit",
+   "tier": 2,
+   "mass": 3,
+   "hp": 11,
+   "body": "jackrabbit",
+   "accent": "cream",
+   "shape": [
+    110,
+    90,
+    90
+   ],
+   "parts": [
+    "jack_ears",
+    "hind_kick",
+    "sprinter_heart"
+   ],
+   "blurb": "All ears and legs, and fast as a thrown stone.",
+   "set": "rodent"
+  },
+  {
+   "id": "snake",
+   "name": "Snake",
+   "tier": 2,
+   "mass": 3,
+   "hp": 9,
+   "body": "snake",
+   "accent": "goldbelt",
+   "shape": [
+    150,
+    50,
+    60
+   ],
+   "parts": [
+    "venom_fangs",
+    "coils",
+    "shed_skin"
+   ],
+   "blurb": "It coils, it waits, and then the bite.",
+   "set": "critter"
+  },
+  {
+   "id": "turtle",
+   "name": "Turtle",
+   "tier": 2,
+   "mass": 4,
+   "hp": 8,
+   "body": "turtle",
+   "accent": "turtleshell",
+   "shape": [
+    110,
+    70,
+    100
+   ],
+   "parts": [
+    "turtle_shell",
+    "snapping_jaw",
+    "stubby_legs"
+   ],
+   "blurb": "Slow, armoured, and patient as a stone.",
+   "set": "critter"
+  },
+  {
+   "id": "turkey",
+   "name": "Turkey",
+   "tier": 2,
+   "mass": 3,
+   "hp": 9,
+   "body": "turkey",
+   "accent": "wattle",
+   "shape": [
+    100,
+    100,
+    90
+   ],
+   "parts": [
+    "display_fan",
+    "wattle",
+    "spurs"
+   ],
+   "blurb": "Puffs up, gobbles, and kicks.",
+   "set": "critter"
+  },
+  {
+   "id": "anthill",
+   "name": "Anthill",
+   "tier": 2,
+   "mass": 4,
+   "hp": 8,
+   "body": "dirt",
+   "accent": "ant",
+   "shape": [
+    120,
+    90,
+    120
+   ],
+   "parts": [
+    "soldier_ants",
+    "ant_mound",
+    "formic_spray"
+   ],
+   "blurb": "Not one creature but a thousand, and their hill.",
+   "set": "bug"
+  },
+  {
+   "id": "bear",
+   "name": "Bear",
+   "tier": 3,
+   "mass": 5,
+   "hp": 12,
+   "body": "bear",
+   "accent": "cream",
+   "shape": [
+    120,
+    100,
+    110
+   ],
+   "parts": [
+    "bear_paws",
+    "hibernation_fat",
+    "bear_roar",
+    "claws"
+   ],
+   "blurb": "Fat from autumn and in no mood to share.",
+   "set": "beast"
+  },
+  {
+   "id": "hawk",
+   "name": "Hawk",
+   "tier": 3,
+   "mass": 4,
+   "hp": 11,
+   "body": "hawk",
+   "accent": "cream",
+   "shape": [
+    100,
+    96,
+    90
+   ],
+   "parts": [
+    "hooked_beak",
+    "keen_eyes",
+    "broad_wings",
+    "talons"
+   ],
+   "blurb": "It has been circling you since the first floor.",
+   "set": "critter"
+  },
+  {
+   "id": "deer",
+   "name": "Deer",
+   "tier": 3,
+   "mass": 4,
+   "hp": 9,
+   "body": "deer",
+   "accent": "cream",
+   "shape": [
+    120,
+    96,
+    90
+   ],
+   "parts": [
+    "young_antlers",
+    "white_tail",
+    "bounding_legs"
+   ],
+   "blurb": "Young, quick, and testing its antlers on everything.",
+   "set": "beast"
+  },
+  {
+   "id": "unicorn",
+   "name": "Unicorn",
+   "tier": 3,
+   "mass": 4,
+   "hp": 9,
+   "body": "unicorn",
+   "accent": "flower",
+   "shape": [
+    120,
+    96,
+    90
+   ],
+   "parts": [
+    "unicorn_horn",
+    "rainbow_mane",
+    "hooves"
+   ],
+   "blurb": "Real after all, and it does not want to be found.",
+   "set": "beast"
+  },
+  {
+   "id": "dragon_hatchling",
+   "name": "Dragon Hatchling",
+   "tier": 3,
+   "mass": 4,
+   "hp": 8,
+   "body": "dragon",
+   "accent": "goldbelt",
+   "shape": [
+    110,
+    90,
+    96
+   ],
+   "parts": [
+    "fire_breath",
+    "dragon_scales",
+    "dragon_tail"
+   ],
+   "blurb": "Small for a dragon. Large for anything else.",
+   "set": "beast"
+  },
+  {
+   "id": "swan",
+   "name": "Swan",
+   "tier": 3,
+   "mass": 4,
+   "hp": 12,
+   "body": "swan",
+   "accent": "beak",
+   "shape": [
+    110,
+    90,
+    90
+   ],
+   "parts": [
+    "swan_neck",
+    "wing_buffet",
+    "webbed_feet"
+   ],
+   "blurb": "Graceful on the water. Not on land, and not to you.",
+   "set": "critter"
   }
  ]
 }

@@ -13,8 +13,13 @@ copied from the game's own output:
   ones open at the start.
 - a battle shows the player's creature on the left, named Burrowling, with
   one countdown row per part (2).
-- winning a battle offers +8 max health (rules.json max_hp_reward): taken,
-  the sheet reads 60 at most.
+- dragging the Teeth card from the sheet into the first bag place moves it:
+  one part on the body, one in the bag (rules.json bag_size 2 places). The
+  Thick Fur alone gives 46 + 6 = 52, so health stays 52 / 52 — and dragging
+  the Teeth back onto the creature in the clearing puts two parts on again.
+- winning a battle offers forage (rules.json forage.per_forage, 26 to 34 of
+  100) and +8 max health (max_hp_reward): taken, the sheet reads 60 at most,
+  and the screen waits for Continue.
 - giving up a run ends it; back on the title the record counts 1 run, and a
   reload keeps it.
 """
@@ -29,6 +34,18 @@ RULES = json.loads((ROOT / "data" / "rules.json").read_text())
 
 def click(page, selector):
     page.click(selector, timeout=5000)
+    page.wait_for_timeout(250)
+
+
+def drag(page, source, target):
+    """A part picked up and put down with the mouse, as a person drags it."""
+    a = page.locator(source).first.bounding_box()
+    page.mouse.move(a["x"] + a["width"] / 2, a["y"] + a["height"] / 2)
+    page.mouse.down()
+    page.mouse.move(a["x"] + a["width"] / 2 + 6, a["y"] + a["height"] / 2 + 6)
+    b = page.locator(target).first.bounding_box()
+    page.mouse.move(b["x"] + b["width"] / 2, b["y"] + b["height"] / 2, steps=8)
+    page.mouse.up()
     page.wait_for_timeout(250)
 
 
@@ -67,6 +84,16 @@ def run(page, check, engine):
     check(lo <= len(opened) <= hi, f"{lo} to {hi} ways in ({len(opened)})")
     check(all("battle" in n.get_attribute("class") for n in opened), "the first floor is all battles")
 
+    drag(page, "#s-parts .card:nth-child(1)", "#s-bag .card:nth-child(1)")
+    body = page.query_selector_all("#s-parts .card:not(.empty-slot)")
+    bag = page.query_selector_all("#s-bag .card:not(.empty-slot)")
+    check(len(body) == 1 and len(bag) == 1, f"a part dragged into the bag leaves the body ({len(body)}, {len(bag)})")
+    check(len(page.query_selector_all("#s-bag .card")) == RULES["bag_size"], "the bag has two places")
+    check(page.inner_text("#s-hp") == "52 / 52", f"the Thick Fur's health stays ({page.inner_text('#s-hp')!r})")
+    drag(page, "#s-bag .card:nth-child(1)", "#creature-zone")
+    body = page.query_selector_all("#s-parts .card:not(.empty-slot)")
+    check(len(body) == 2, f"dragged onto the creature, it is grafted again ({len(body)})")
+
     click(page, "#nodes .node.open")
     check(mode(page) == "battle", f"a battle starts ({mode(page)})")
     page.wait_for_timeout(600)
@@ -83,8 +110,16 @@ def run(page, check, engine):
     if after == "reward":
         parts = page.query_selector_all("#w-parts .card")
         check(2 <= len(parts) <= 4, f"the loser's parts are offered ({len(parts)})")
+        click(page, "#reward-forage")
+        forage = page.inner_text("#s-forage")
+        lo, hi = RULES["forage"]["per_forage"]
+        got = forage.split(" / ")[0]
+        check(got.isdigit() and lo <= int(got) <= hi, f"foraging fills the bar by {lo} to {hi} ({forage!r})")
+        check(page.is_disabled("#reward-forage"), "once a win")
         click(page, "#reward-hp")
-        check(mode(page) == "map", f"taking health returns to the map ({mode(page)})")
+        check(mode(page) == "reward", f"the reward waits for Continue ({mode(page)})")
+        click(page, "#reward-done")
+        check(mode(page) == "map", f"then back to the map ({mode(page)})")
         hp = page.inner_text("#s-hp")
         check(hp.endswith("/ 60"), f"max health rose by 8 ({hp!r})")
         click(page, "#abandon")

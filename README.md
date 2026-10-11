@@ -5,10 +5,13 @@ A 3D auto-battling roguelike that runs in the browser. Your creature walks a bra
 **Play:** https://sgilson7.github.io/graftwood/
 
 - **Mass and parts.** A creature has mass, and one body part fits on each unit of it. You start with 3 mass and 2 parts. Past 5, each extra unit of mass and each extra part slows every part by 10%.
-- **Parts.** 35 of them, each in a socket (mouth, head, back, legs, tail, side), drawn on the 3D body when grafted. Some act on a timer: Teeth bite for 2 every 2 s, a Stinger adds poison every 4 s (each stack deals 1 every 2 s, up to 10), Lucky Feet add 1% to dodge every 5 s, Slime Coat soaks damage. Others change the creature for good: Bunny Ears take 1 off every ranged hit, Wings add 3% dodge for each empty slot.
-- **The path.** 12 floors of battles, elites, encounters, the Trader and rests, rolled for each run, ending at the Old Stag: seven mass, six parts, and slow.
-- **Winning a fight** pays acorns and offers +8 max health or one of the loser's parts. With no slot free, the part replaces one of yours.
-- **Encounters** are half good and half bad: more mass, a found part and full healing, or brambles that take mass (and the part that no longer fits), a heron that takes a part, and a magpie that takes your acorns.
+- **Building.** Drag parts onto your creature (the part shows on the 3D body, glowing, while you hold it there), onto one of your parts to swap them, into your bag (two places; parts there do nothing in a fight), or into the bin.
+- **Parts.** 89 of them, each in a socket (mouth, head, back, legs, tail, side), drawn on the 3D body when grafted. Some act on a timer: Teeth bite for 2 every 2 s, a Stinger adds poison every 4 s (each stack deals 1 every 2 s, up to 10), Lucky Feet add 1% to dodge every 5 s, Slime Coat soaks damage. Others change the creature for good: Bunny Ears take 1 off every ranged hit, Wings add 3% dodge for each empty slot.
+- **The path.** 12 floors of battles, elites, encounters, the Trader (a unit of mass costs 20 acorns) and rests, rolled for each run, ending at the Old Stag: seven mass, six parts, and slow.
+- **Sets.** Every creature and part is a Bug, Rodent, Beast or Critter; two or more of one kind on your body earn a bonus (Bugs act sooner, Rodents dodge, Beasts have more health, Critters regenerate). Seven wild parts (Fungal Antenna, Third Eye, Opposable Thumb, Prehensile Tail, Eye Stalk, Fur Patch, Two-Headed) suit any creature.
+- **Winning a fight** pays acorns, lets you forage (a full forage bar cultivates a unit of mass, about every 3 or 4 wins), and offers +8 max health or one of the loser's parts.
+- **Encounters** are half good and half bad: more mass, a found part, an old grafter who upgrades a part, full healing; or brambles that take mass (and the part that no longer fits), a heron that takes a part, a blight that withers one, and a packrat that raids your bag.
+- **The woods** hold 34 creatures in three tiers, from ants and ducks to bears, unicorns and a dragon hatchling.
 - **Three starters**: the Burrowling (Teeth, Thick Fur), the Flitterling (Stinger, Wings) and the Sprigling (Spore Cap, Slime Coat).
 
 Fights run at 1×, 2× or 4×, or skip to the end. N turns the sound on or off.

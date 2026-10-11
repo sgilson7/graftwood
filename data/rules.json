@@ -1,5 +1,5 @@
 {
- "_about": "Every number of the run and the fight. Times are milliseconds; percentages are whole numbers. tiers gives the tier of the creatures met on each floor; the last floor is the boss.",
+ "_about": "Every number of the run and the fight. Times are milliseconds; percentages are whole numbers. tiers gives the tier of the creatures met on each floor; the last floor is the boss. bag_size: parts carried but not grafted (they do nothing). upgrade: each level adds amount_pct percent of a part's numbers (at least 1) and takes faster_pct percent off its timer. forage: each win's forage adds per_forage to the bar; a full bar cultivates one unit of mass. regen is in tenths of health a second (regen_cap, in whole health a second, bounds the total). sets: the highest bonus whose count of parts of that set the body carries is reached applies.",
  "floors": 12,
  "columns": 4,
  "min_nodes": 2,
@@ -52,10 +52,9 @@
    16,
    24
   ],
-  "mass_price": 35,
+  "mass_price": 20,
   "heal_price": 10,
-  "heal_amount": 10,
-  "shed_price": 8
+  "heal_amount": 10
  },
  "combat": {
   "free_mass": 5,
@@ -68,6 +67,121 @@
   "fatigue_after_ms": 30000,
   "fatigue_every_ms": 1000,
   "fatigue_growth_ms": 5000,
-  "max_fight_ms": 120000
- }
+  "max_fight_ms": 120000,
+  "regen_cap": 3
+ },
+ "bag_size": 2,
+ "upgrade": {
+  "amount_pct": 50,
+  "faster_pct": 10,
+  "max_level": 3,
+  "min_level": -1
+ },
+ "forage": {
+  "full": 100,
+  "per_forage": [
+   26,
+   34
+  ]
+ },
+ "sets": [
+  {
+   "id": "bug",
+   "colour": "goldbelt",
+   "bonuses": [
+    {
+     "count": 2,
+     "mods": {
+      "haste": 10
+     }
+    },
+    {
+     "count": 3,
+     "mods": {
+      "haste": 20
+     }
+    },
+    {
+     "count": 4,
+     "mods": {
+      "haste": 25,
+      "evasion": 5
+     }
+    }
+   ]
+  },
+  {
+   "id": "rodent",
+   "colour": "fur",
+   "bonuses": [
+    {
+     "count": 2,
+     "mods": {
+      "evasion": 5
+     }
+    },
+    {
+     "count": 3,
+     "mods": {
+      "evasion": 10
+     }
+    },
+    {
+     "count": 4,
+     "mods": {
+      "evasion": 15,
+      "haste": 10
+     }
+    }
+   ]
+  },
+  {
+   "id": "beast",
+   "colour": "coral",
+   "bonuses": [
+    {
+     "count": 2,
+     "mods": {
+      "max_hp": 8
+     }
+    },
+    {
+     "count": 3,
+     "mods": {
+      "max_hp": 15
+     }
+    },
+    {
+     "count": 4,
+     "mods": {
+      "max_hp": 22
+     }
+    }
+   ]
+  },
+  {
+   "id": "critter",
+   "colour": "teal",
+   "bonuses": [
+    {
+     "count": 2,
+     "mods": {
+      "regen": 2
+     }
+    },
+    {
+     "count": 3,
+     "mods": {
+      "regen": 3
+     }
+    },
+    {
+     "count": 4,
+     "mods": {
+      "regen": 5
+     }
+    }
+   ]
+  }
+ ]
 }

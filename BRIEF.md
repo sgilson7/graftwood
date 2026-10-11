@@ -39,6 +39,27 @@ Stage 1. Sam's request, word for word, and the design it points to.
 
 (Spacing after colons normalised; the words are the friend's.)
 
+## Playtest edits, from the game's designer (2026-10-11)
+
+Sam passed these on after a play test, asking for them to be made, the game updated and deployed. Word for word:
+
+> A couple of edits to the gameplay loop:
+> -Players should be able to drag and drop the body parts onto the creature, something similar to how spore allows players to build creatures.
+>
+> -Players should be able to hold up to 2 Body parts in their inventory, body parts are inert and do not affect battle while in the inventory.
+>
+> -Add encounter to upgrade a body part
+> -lower cost of additional mass in stores to 20 Acorns
+> -Add the following Creatures to the pool and create 2-3 associated key features for each creature to add to the body part pool: Frog, Salmon, Bear, Bee swarm, Anthill, squirrel, skunk,possum, Hawk,turkey, Deer,Jackrabbit,Unicorn, Dragon Hatchling, snake, snail, Turtle,Duck,Swan.
+>
+> Add the following random Body parts that can modify any creature: Fungal Antenna, Third Eye, Opposable thumb,Prehensile tail,EyeStalk,Fur Patch,
+> Two-Headed:Grant an extra mass slot that only a head item can fit in
+> -Add an ability to "forage" after a battle, to fill up a forage bar and allow you to cultivate mass every 3-4 battles.
+>
+> Add the Following Mechanics, and create new body part to match if need be:limited health regeneration, no more than 3/sec
+> Add set types: Bug, Rodent, Beast, Critter, assign these to each creature and their associated body parts.
+> Add Set bonus for having multiples of each
+
 ## Autonomy
 
 Sam approved in advance: a public GitHub repository, GitHub Pages for it, deploys to Pages, and adding the game to his website (sgilson7.github.io) when it is ready.

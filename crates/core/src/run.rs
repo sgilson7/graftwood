@@ -4,7 +4,7 @@
 
 use crate::combat::{Fight, PLAYER};
 use crate::content::{fill, Content, Outcome};
-use crate::creature::Creature;
+use crate::creature::{Creature, Graft};
 use crate::map::{Kind, Map};
 use crate::rng::Rng;
 
@@ -19,14 +19,35 @@ pub struct Offer {
 pub struct Shop {
     pub offers: Vec<Offer>,
     pub mass_bought: bool,
-    pub shed_used: bool,
 }
 
-/// Where a graft returns to once it is settled.
+/// Where a body part can be picked up from or put down: a slot on the body,
+/// the body as a whole (the first slot it fits), a place in the bag, a part
+/// on offer (a reward, the Trader's stock, a find), the bin, or the old
+/// grafter's stump.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Back {
-    Map,
-    Shop,
+pub enum Place {
+    Body(usize),
+    Creature,
+    Bag(usize),
+    Offer(usize),
+    Bin,
+    Upgrade,
+}
+
+impl Place {
+    /// The page names a place by a word and a number.
+    pub fn parse(kind: &str, i: usize) -> Option<Place> {
+        match kind {
+            "body" => Some(Place::Body(i)),
+            "creature" => Some(Place::Creature),
+            "bag" => Some(Place::Bag(i)),
+            "offer" => Some(Place::Offer(i)),
+            "bin" => Some(Place::Bin),
+            "upgrade" => Some(Place::Upgrade),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -41,19 +62,21 @@ pub enum Stage {
         foe: usize,
         parts: Vec<usize>,
         acorns: i32,
+        /// what this win's forage added, once the player has foraged
+        foraged: Option<i32>,
+        /// the health or the part has been taken
+        taken: bool,
     },
     Encounter {
         index: usize,
         lines: Vec<String>,
-        pending: Option<usize>,
+        /// a part found and not yet placed
+        found: Option<Graft>,
+        /// an upgrade waiting for the player to choose a part
+        upgrade: bool,
     },
     Shop,
     Rest,
-    /// a part that needs a slot: replace one, or let it go
-    Graft {
-        part: usize,
-        back: Back,
-    },
     Dead,
     Won,
 }
@@ -64,9 +87,13 @@ pub struct Run {
     pub at: Option<usize>,
     pub path: Vec<usize>,
     pub me: Creature,
+    /// parts carried but not grafted: they do nothing in a fight
+    pub bag: Vec<Graft>,
     pub starter: usize,
     pub hp: i32,
     pub acorns: i32,
+    /// the forage bar, from 0 to the rules' `full`
+    pub forage: i32,
     pub stage: Stage,
     pub shop: Option<Shop>,
     pub battles_won: i32,
@@ -117,9 +144,11 @@ impl Run {
             at: None,
             path: Vec::new(),
             me,
+            bag: Vec::new(),
             starter,
             hp,
             acorns: c.rules.start_acorns,
+            forage: 0,
             stage: Stage::Map,
             shop: None,
             battles_won: 0,
@@ -229,36 +258,59 @@ impl Run {
         };
         let acorns = self.rng.range(lo, hi);
         self.acorns += acorns;
-        let parts = Creature::from_def(c, &c.creatures[foe]).parts;
-        self.stage = Stage::Reward { foe, parts, acorns };
+        let parts = Creature::from_def(c, &c.creatures[foe])
+            .parts
+            .iter()
+            .map(|g| g.part)
+            .collect();
+        self.stage = Stage::Reward {
+            foe,
+            parts,
+            acorns,
+            foraged: None,
+            taken: false,
+        };
         true
     }
 
+    /// Raises max health: one of the two rewards for a win.
     pub fn reward_hp(&mut self, c: &Content) -> bool {
-        if !matches!(self.stage, Stage::Reward { .. }) {
+        let Stage::Reward { taken, .. } = &mut self.stage else {
+            return false;
+        };
+        if *taken {
             return false;
         }
+        *taken = true;
         self.me.base_hp += c.rules.max_hp_reward;
         self.hp += c.rules.max_hp_reward;
         self.hp = self.hp.min(self.max_hp(c));
-        self.stage = Stage::Map;
         true
     }
 
-    /// Adopts the slain creature's part at `i`. With no empty slot, the
-    /// graft screen asks which part it replaces.
+    /// Takes the slain creature's part at `i`: grafted if it fits, else
+    /// into the bag.
     pub fn reward_part(&mut self, c: &Content, i: usize) -> bool {
-        let Stage::Reward { parts, .. } = &self.stage else {
+        matches!(self.stage, Stage::Reward { .. }) && self.take(c, i)
+    }
+
+    /// Forages once after a win: the bar fills by a roll, up to full.
+    pub fn reward_forage(&mut self, c: &Content) -> bool {
+        let Stage::Reward { foraged: None, .. } = self.stage else {
             return false;
         };
-        let Some(&part) = parts.get(i) else {
-            return false;
-        };
-        self.offer_part(c, part, Back::Map);
+        let [lo, hi] = c.rules.forage.per_forage;
+        let found = self.rng.range(lo, hi);
+        let before = self.forage;
+        self.forage = (self.forage + found).min(c.rules.forage.full);
+        if let Stage::Reward { foraged, .. } = &mut self.stage {
+            *foraged = Some(self.forage - before);
+        }
         true
     }
 
-    pub fn reward_skip(&mut self) -> bool {
+    /// Leaves the reward, taken or not.
+    pub fn reward_done(&mut self) -> bool {
         if !matches!(self.stage, Stage::Reward { .. }) {
             return false;
         }
@@ -266,48 +318,212 @@ impl Run {
         true
     }
 
-    fn back_to(&mut self, back: Back) {
-        self.stage = match back {
-            Back::Map => Stage::Map,
-            Back::Shop => Stage::Shop,
-        };
+    pub fn can_cultivate(&self, c: &Content) -> bool {
+        self.can_edit() && self.forage >= c.rules.forage.full && self.me.mass < c.rules.max_mass
     }
 
-    /// Grafts a part if there is room, else asks; then returns to `back`.
-    fn offer_part(&mut self, c: &Content, part: usize, back: Back) {
-        let old = self.max_hp(c);
-        if self.me.graft(part) {
-            self.after_change(c, old);
-            self.back_to(back);
-        } else {
-            self.stage = Stage::Graft { part, back };
+    /// Spends a full forage bar on one unit of mass.
+    pub fn cultivate(&mut self, c: &Content) -> bool {
+        if !self.can_cultivate(c) {
+            return false;
+        }
+        self.forage -= c.rules.forage.full;
+        self.me.grow(c);
+        true
+    }
+
+    /// Whether parts can be moved about: on every screen between fights.
+    pub fn can_edit(&self) -> bool {
+        matches!(
+            self.stage,
+            Stage::Map | Stage::Reward { .. } | Stage::Encounter { .. } | Stage::Shop | Stage::Rest
+        )
+    }
+
+    pub fn bag_has_room(&self, c: &Content) -> bool {
+        self.bag.len() < c.rules.bag_size
+    }
+
+    /// The part on offer at `i`, if it may be taken now: a reward not yet
+    /// chosen, a find not yet placed, or stock not sold and affordable.
+    pub fn offer(&self, i: usize) -> Option<Graft> {
+        match &self.stage {
+            Stage::Reward {
+                parts, taken: false, ..
+            } => parts.get(i).map(|&p| Graft::new(p)),
+            Stage::Encounter { found: Some(g), .. } if i == 0 => Some(*g),
+            Stage::Shop => {
+                let o = self.shop.as_ref()?.offers.get(i)?;
+                (!o.sold && self.acorns >= o.price).then_some(Graft::new(o.part))
+            }
+            _ => None,
         }
     }
 
-    pub fn graft_replace(&mut self, c: &Content, slot: usize) -> bool {
-        let Stage::Graft { part, back } = self.stage else {
+    /// Marks the offer at `i` as taken, paying for it at the Trader.
+    fn spend(&mut self, i: usize) {
+        match &mut self.stage {
+            Stage::Reward { taken, .. } => *taken = true,
+            Stage::Encounter { found, .. } => *found = None,
+            Stage::Shop => {
+                if let Some(o) = self.shop.as_mut().and_then(|s| s.offers.get_mut(i)) {
+                    o.sold = true;
+                    self.acorns -= o.price;
+                }
+            }
+            _ => {}
+        }
+    }
+
+    /// Takes offer `i` the plain way: onto the body if it fits, else into
+    /// the bag. False if neither has room.
+    pub fn take(&mut self, c: &Content, i: usize) -> bool {
+        self.move_part(c, Place::Offer(i), Place::Creature)
+            || self.move_part(c, Place::Offer(i), Place::Bag(self.bag.len()))
+    }
+
+    /// Whether a move would be allowed, without making it.
+    pub fn can_move(&self, c: &Content, from: Place, to: Place) -> bool {
+        self.clone().move_part(c, from, to)
+    }
+
+    /// Moves a part from one place to another, if the rules allow it:
+    ///
+    /// - onto the body: into a free slot, or onto one of its parts to swap
+    ///   (the part it replaces goes where the new one came from, or into
+    ///   the bag when it came from an offer);
+    /// - into the bag: into a free place, or onto a part there to swap;
+    /// - into the bin: gone;
+    /// - onto the grafter's stump, when an encounter offers it: up a level.
+    ///
+    /// Nothing is ever lost by a move but what goes in the bin: a move that
+    /// would leave a part without a slot is refused.
+    pub fn move_part(&mut self, c: &Content, from: Place, to: Place) -> bool {
+        if !self.can_edit() {
             return false;
-        };
+        }
         let old = self.max_hp(c);
-        if !self.me.replace(slot, part) {
+        let before = (self.me.clone(), self.bag.clone());
+        let ok = self.try_move(c, from, to) && self.me.fits(c) && self.bag.len() <= c.rules.bag_size;
+        if !ok {
+            (self.me, self.bag) = before;
             return false;
+        }
+        if let Place::Offer(i) = from {
+            self.spend(i);
         }
         self.after_change(c, old);
-        self.back_to(back);
         true
     }
 
-    pub fn graft_decline(&mut self) -> bool {
-        let Stage::Graft { back, .. } = self.stage else {
-            return false;
+    fn try_move(&mut self, c: &Content, from: Place, to: Place) -> bool {
+        let body = self.me.parts.len();
+        let bag = self.bag.len();
+        match (from, to) {
+            (Place::Body(i), Place::Body(j)) if i < body && j < body && i != j => {
+                self.me.parts.swap(i, j);
+                true
+            }
+            (Place::Body(i), Place::Bag(j)) if i < body && j < bag => {
+                std::mem::swap(&mut self.me.parts[i], &mut self.bag[j]);
+                true
+            }
+            (Place::Body(i), Place::Bag(_)) if i < body && self.bag_has_room(c) => {
+                let g = self.me.parts.remove(i);
+                self.bag.push(g);
+                true
+            }
+            (Place::Body(i), Place::Bin) if i < body => {
+                self.me.parts.remove(i);
+                true
+            }
+            (Place::Bag(i), Place::Creature) if i < bag => {
+                let g = self.bag.remove(i);
+                self.me.parts.push(g);
+                true
+            }
+            (Place::Bag(i), Place::Body(j)) if i < bag && j < body => {
+                std::mem::swap(&mut self.bag[i], &mut self.me.parts[j]);
+                true
+            }
+            (Place::Bag(i), Place::Bag(j)) if i < bag && j < bag && i != j => {
+                self.bag.swap(i, j);
+                true
+            }
+            (Place::Bag(i), Place::Bin) if i < bag => {
+                self.bag.remove(i);
+                true
+            }
+            (Place::Offer(i), Place::Creature) => match self.offer(i) {
+                Some(g) => {
+                    self.me.parts.push(g);
+                    true
+                }
+                None => false,
+            },
+            (Place::Offer(i), Place::Bag(_)) => match self.offer(i) {
+                Some(g) if self.bag_has_room(c) => {
+                    self.bag.push(g);
+                    true
+                }
+                _ => false,
+            },
+            (Place::Offer(i), Place::Body(j)) if j < body => match self.offer(i) {
+                Some(g) if self.bag_has_room(c) => {
+                    let old = std::mem::replace(&mut self.me.parts[j], g);
+                    self.bag.push(old);
+                    true
+                }
+                _ => false,
+            },
+            (Place::Body(i), Place::Upgrade) if i < body => {
+                let g = self.me.parts[i];
+                self.upgrade(c, g).map(|up| self.me.parts[i] = up).is_some()
+            }
+            (Place::Bag(i), Place::Upgrade) if i < bag => {
+                let g = self.bag[i];
+                self.upgrade(c, g).map(|up| self.bag[i] = up).is_some()
+            }
+            _ => false,
+        }
+    }
+
+    /// Spends an encounter's upgrade on `g`, if one is waiting and `g` can
+    /// rise. Returns the part a level up.
+    fn upgrade(&mut self, c: &Content, g: Graft) -> Option<Graft> {
+        let Stage::Encounter { upgrade, .. } = &mut self.stage else {
+            return None;
         };
-        self.back_to(back);
-        true
+        if !*upgrade || !c.parts[g.part].can_upgrade() || g.level >= c.rules.upgrade.max_level {
+            return None;
+        }
+        *upgrade = false;
+        Some(Graft {
+            part: g.part,
+            level: g.level + 1,
+        })
     }
 
-    fn random_part(&mut self, c: &Content, max_tier: i32) -> usize {
+    /// A part's name, with its level when it has one.
+    pub fn graft_name(c: &Content, g: Graft) -> String {
+        let name = c.parts[g.part].name.clone();
+        match g.level {
+            0 => name,
+            n if n > 0 => fill(&c.word("level_up"), &[("part", name), ("n", n.to_string())]),
+            n => fill(&c.word("level_down"), &[("part", name), ("n", (-n).to_string())]),
+        }
+    }
+
+    fn random_part(&mut self, c: &Content, max_tier: i32, wild: bool) -> usize {
         let pool: Vec<usize> = (0..c.parts.len())
-            .filter(|&p| c.parts[p].tier >= 1 && c.parts[p].tier <= max_tier.max(1))
+            .filter(|&p| {
+                let part = &c.parts[p];
+                if wild {
+                    part.set.is_empty()
+                } else {
+                    part.tier >= 1 && part.tier <= max_tier.max(1)
+                }
+            })
             .collect();
         pool[self.rng.range(0, pool.len() as i32 - 1) as usize]
     }
@@ -316,8 +532,10 @@ impl Run {
         let index = self.deck[self.drawn % self.deck.len()];
         self.drawn += 1;
         let mut lines = Vec::new();
-        let mut pending = None;
+        let mut found = None;
+        let mut upgrade = false;
         let old = self.max_hp(c);
+        let named = |key: &str, g: Graft| fill(&c.word(key), &[("part", Run::graft_name(c, g))]);
         for o in c.encounters[index].outcomes.clone() {
             match o {
                 Outcome::Mass { amount } if amount > 0 => {
@@ -332,37 +550,90 @@ impl Run {
                 Outcome::Mass { amount } => {
                     for _ in 0..(-amount) {
                         let before = self.me.mass;
-                        match self.me.shrink() {
-                            Some(p) => lines.push(fill(
-                                &c.word("out_mass_down_part"),
-                                &[("part", c.parts[p].name.clone())],
-                            )),
-                            None if self.me.mass < before => lines.push(c.word("out_mass_down")),
-                            None => lines.push(c.word("out_mass_floor")),
+                        let fell = self.me.shrink(c);
+                        if fell.is_empty() && self.me.mass < before {
+                            lines.push(c.word("out_mass_down"));
+                        } else if fell.is_empty() {
+                            lines.push(c.word("out_mass_floor"));
+                        }
+                        for g in fell {
+                            lines.push(named("out_mass_down_part", g));
                         }
                     }
                 }
-                Outcome::GainPart { tier } => {
-                    let part = self.random_part(c, tier);
-                    let name = c.parts[part].name.clone();
-                    if self.me.graft(part) {
-                        lines.push(fill(&c.word("out_gain_part"), &[("part", name)]));
-                    } else {
-                        lines.push(fill(&c.word("out_gain_part_full"), &[("part", name)]));
-                        pending = Some(part);
-                    }
+                Outcome::GainPart { tier, wild } => {
+                    let g = Graft::new(self.random_part(c, tier, wild));
+                    lines.push(named("out_gain_part", g));
+                    found = Some(g);
                 }
                 Outcome::LosePart => {
                     if self.me.parts.is_empty() {
                         lines.push(c.word("out_lose_none"));
                     } else {
                         let slot = self.rng.range(0, self.me.parts.len() as i32 - 1) as usize;
-                        let p = self.me.remove(slot).unwrap_or(0);
+                        if let Some((g, fell)) = self.me.remove(c, slot) {
+                            lines.push(named("out_lose_part", g));
+                            for f in fell {
+                                lines.push(named("out_falls_off", f));
+                            }
+                        }
+                    }
+                }
+                Outcome::LoseBagPart => {
+                    if self.bag.is_empty() {
+                        lines.push(c.word("out_lose_bag_none"));
+                    } else {
+                        let i = self.rng.range(0, self.bag.len() as i32 - 1) as usize;
+                        let g = self.bag.remove(i);
+                        lines.push(named("out_lose_bag_part", g));
+                    }
+                }
+                Outcome::UpgradePart => {
+                    let max = c.rules.upgrade.max_level;
+                    let any = self
+                        .me
+                        .parts
+                        .iter()
+                        .chain(self.bag.iter())
+                        .any(|g| c.parts[g.part].can_upgrade() && g.level < max);
+                    upgrade = any;
+                    lines.push(c.word(if any { "out_upgrade" } else { "out_upgrade_none" }));
+                }
+                Outcome::DowngradePart => {
+                    let min = c.rules.upgrade.min_level;
+                    let slots: Vec<usize> = (0..self.me.parts.len())
+                        .filter(|&i| {
+                            let g = self.me.parts[i];
+                            c.parts[g.part].can_upgrade() && g.level > min
+                        })
+                        .collect();
+                    if slots.is_empty() {
+                        lines.push(c.word("out_downgrade_none"));
+                    } else {
+                        let i = slots[self.rng.range(0, slots.len() as i32 - 1) as usize];
+                        let was = self.me.parts[i];
+                        self.me.parts[i].level -= 1;
                         lines.push(fill(
-                            &c.word("out_lose_part"),
-                            &[("part", c.parts[p].name.clone())],
+                            &c.word("out_downgrade"),
+                            &[
+                                ("part", Run::graft_name(c, was)),
+                                ("now", Run::graft_name(c, self.me.parts[i])),
+                            ],
                         ));
                     }
+                }
+                Outcome::Forage { amount } => {
+                    let before = self.forage;
+                    self.forage = (self.forage + amount).clamp(0, c.rules.forage.full);
+                    let key = if amount >= 0 {
+                        "out_forage_up"
+                    } else {
+                        "out_forage_down"
+                    };
+                    lines.push(fill(
+                        &c.word(key),
+                        &[("n", (self.forage - before).abs().to_string())],
+                    ));
                 }
                 Outcome::MaxHp { amount } => {
                     self.me.base_hp = (self.me.base_hp + amount).max(1);
@@ -411,19 +682,24 @@ impl Run {
         Stage::Encounter {
             index,
             lines,
-            pending,
+            found,
+            upgrade,
         }
     }
 
-    pub fn encounter_done(&mut self, c: &Content) -> bool {
-        let Stage::Encounter { pending, .. } = &self.stage else {
+    /// Walks on from an encounter. A find not placed and an upgrade not
+    /// spent are left behind.
+    pub fn encounter_done(&mut self) -> bool {
+        if !matches!(self.stage, Stage::Encounter { .. }) {
             return false;
-        };
-        match *pending {
-            Some(part) => self.offer_part(c, part, Back::Map),
-            None => self.stage = Stage::Map,
         }
+        self.stage = Stage::Map;
         true
+    }
+
+    /// Takes the encounter's find the plain way.
+    pub fn encounter_take(&mut self, c: &Content) -> bool {
+        matches!(self.stage, Stage::Encounter { .. }) && self.take(c, 0)
     }
 
     fn stock_shop(&mut self, c: &Content, floor: usize) -> Shop {
@@ -433,7 +709,7 @@ impl Run {
         let mut tries = 0;
         while offers.len() < s.offers && tries < 100 {
             tries += 1;
-            let part = self.random_part(c, tier);
+            let part = self.random_part(c, tier, false);
             if offers.iter().any(|o| o.part == part) {
                 continue;
             }
@@ -447,7 +723,6 @@ impl Run {
         Shop {
             offers,
             mass_bought: false,
-            shed_used: false,
         }
     }
 
@@ -455,22 +730,9 @@ impl Run {
         self.stage == Stage::Shop && self.shop.is_some()
     }
 
+    /// Buys the Trader's offer at `i` the plain way.
     pub fn shop_buy(&mut self, c: &Content, i: usize) -> bool {
-        if !self.in_shop() {
-            return false;
-        }
-        let Some(o) = self.shop.as_ref().and_then(|s| s.offers.get(i)).cloned() else {
-            return false;
-        };
-        if o.sold || self.acorns < o.price {
-            return false;
-        }
-        self.acorns -= o.price;
-        if let Some(s) = self.shop.as_mut() {
-            s.offers[i].sold = true;
-        }
-        self.offer_part(c, o.part, Back::Shop);
-        true
+        self.in_shop() && self.take(c, i)
     }
 
     pub fn shop_mass(&mut self, c: &Content) -> bool {
@@ -494,22 +756,6 @@ impl Run {
         }
         self.acorns -= s.heal_price;
         self.hp = (self.hp + s.heal_amount).min(self.max_hp(c));
-        true
-    }
-
-    pub fn shop_shed(&mut self, c: &Content, slot: usize) -> bool {
-        let price = c.rules.shop.shed_price;
-        let used = self.shop.as_ref().map(|s| s.shed_used).unwrap_or(true);
-        if !self.in_shop() || used || self.acorns < price || slot >= self.me.parts.len() {
-            return false;
-        }
-        let old = self.max_hp(c);
-        self.acorns -= price;
-        self.me.remove(slot);
-        self.after_change(c, old);
-        if let Some(s) = self.shop.as_mut() {
-            s.shed_used = true;
-        }
         true
     }
 
@@ -561,6 +807,20 @@ pub(crate) mod tests {
     use super::*;
     use crate::content::tests::content;
 
+    fn part(c: &Content, id: &str) -> Graft {
+        Graft::new(c.part_index(id).unwrap())
+    }
+
+    fn reward(parts: Vec<usize>) -> Stage {
+        Stage::Reward {
+            foe: 0,
+            parts,
+            acorns: 0,
+            foraged: None,
+            taken: false,
+        }
+    }
+
     #[test]
     fn a_run_starts_on_the_map_with_a_three_mass_starter_at_full_health() {
         let c = content();
@@ -569,6 +829,8 @@ pub(crate) mod tests {
         assert_eq!(r.me.mass, 3);
         assert_eq!(r.hp, r.max_hp(&c));
         assert_eq!(r.choices(), r.map.floors[0]);
+        assert!(r.bag.is_empty());
+        assert_eq!(r.forage, 0);
     }
 
     #[test]
@@ -597,36 +859,120 @@ pub(crate) mod tests {
         let max = r.max_hp(&c);
         assert!(r.reward_hp(&c));
         assert_eq!(r.max_hp(&c), max + c.rules.max_hp_reward);
+        assert!(!r.reward_hp(&c), "one reward a win");
+        assert!(!r.reward_part(&c, 0), "health or a part, not both");
+        assert!(r.reward_done());
         assert_eq!(r.stage, Stage::Map);
     }
 
     #[test]
-    fn adopting_a_part_with_room_grafts_it_and_without_room_asks_which_to_replace() {
+    fn a_rewarded_part_is_grafted_if_it_fits_and_bagged_if_not() {
         let c = content();
         let mut r = Run::new(&c, 0, 1);
-        let teeth = c.part_index("stinger").unwrap();
-        r.stage = Stage::Reward {
-            foe: 0,
-            parts: vec![teeth],
-            acorns: 0,
-        };
+        let stinger = c.part_index("stinger").unwrap();
+        r.stage = reward(vec![stinger]);
         let n = r.me.parts.len();
-        assert!(r.me.has_room());
         assert!(r.reward_part(&c, 0));
         assert_eq!(r.me.parts.len(), n + 1);
         // now full: three parts on three mass
-        r.stage = Stage::Reward {
-            foe: 0,
-            parts: vec![teeth],
-            acorns: 0,
-        };
+        r.stage = reward(vec![stinger]);
         assert!(r.reward_part(&c, 0));
-        assert!(matches!(r.stage, Stage::Graft { .. }));
+        assert_eq!(r.me.parts.len(), n + 1);
+        assert_eq!(r.bag, vec![Graft::new(stinger)]);
+    }
+
+    #[test]
+    fn the_bag_holds_two_parts_and_they_do_nothing_in_a_fight() {
+        let c = content();
+        assert_eq!(c.rules.bag_size, 2);
+        let mut r = Run::new(&c, 0, 1);
+        let evasion = r.me.base_evasion(&c);
+        r.bag = vec![part(&c, "eye_stalk"), part(&c, "third_eye")];
+        assert_eq!(r.me.base_evasion(&c), evasion, "bagged parts change nothing");
+        let fight = Fight::new(&c, &r.me, r.hp, &r.me.clone(), 100, 1);
+        assert_eq!(fight.sides[PLAYER].creature.parts.len(), r.me.parts.len());
+        // full: a part from the body has nowhere to go
+        assert!(!r.move_part(&c, Place::Body(0), Place::Bag(2)));
+        // but a swap is fine
         let first = r.me.parts[0];
-        assert!(r.graft_replace(&c, 0));
-        assert_eq!(r.me.parts[0], teeth);
-        assert_ne!(first, teeth);
-        assert_eq!(r.stage, Stage::Map);
+        assert!(r.move_part(&c, Place::Body(0), Place::Bag(1)));
+        assert_eq!(r.bag[1], first);
+    }
+
+    #[test]
+    fn parts_move_between_the_body_the_bag_and_the_bin() {
+        let c = content();
+        let mut r = Run::new(&c, 0, 1);
+        let teeth = r.me.parts[0];
+        // off the body into the bag, and back on
+        assert!(r.move_part(&c, Place::Body(0), Place::Bag(0)));
+        assert_eq!((r.me.parts.len(), r.bag.clone()), (1, vec![teeth]));
+        assert!(r.move_part(&c, Place::Bag(0), Place::Creature));
+        assert_eq!(r.me.parts.last(), Some(&teeth));
+        assert!(r.bag.is_empty());
+        // a full body takes nothing more from the bag, but swaps
+        r.me.parts.push(part(&c, "antennae"));
+        r.bag.push(part(&c, "stinger"));
+        assert!(!r.move_part(&c, Place::Bag(0), Place::Creature));
+        assert!(r.move_part(&c, Place::Bag(0), Place::Body(2)));
+        assert_eq!(r.me.parts[2], part(&c, "stinger"));
+        assert_eq!(r.bag, vec![part(&c, "antennae")]);
+        // the bin takes anything for good
+        assert!(r.move_part(&c, Place::Bag(0), Place::Bin));
+        assert!(r.bag.is_empty());
+        // nothing moves in a fight
+        let first = r.choices()[0];
+        r.pick(&c, first);
+        assert!(!r.move_part(&c, Place::Body(0), Place::Bag(0)));
+    }
+
+    #[test]
+    fn a_move_that_would_leave_a_part_without_a_slot_is_refused() {
+        let c = content();
+        let mut r = Run::new(&c, 0, 1);
+        r.me.parts = vec![part(&c, "teeth"), part(&c, "thick_fur"), part(&c, "lucky_feet")];
+        r.me.parts.push(part(&c, "two_headed"));
+        r.me.parts.push(part(&c, "antennae"));
+        assert!(r.me.fits(&c));
+        // the second head holds the antennae up
+        assert!(!r.move_part(&c, Place::Body(3), Place::Bin));
+        assert!(!r.move_part(&c, Place::Body(3), Place::Bag(0)));
+        assert!(r.move_part(&c, Place::Body(4), Place::Bag(0)));
+        assert!(r.move_part(&c, Place::Body(3), Place::Bag(1)));
+    }
+
+    #[test]
+    fn health_follows_a_part_that_raises_it_on_and_off() {
+        let c = content();
+        let mut r = Run::new(&c, 0, 1);
+        // the Burrowling's Thick Fur: +6
+        let full = r.max_hp(&c);
+        assert!(r.move_part(&c, Place::Body(1), Place::Bag(0)));
+        assert_eq!((r.max_hp(&c), r.hp), (full - 6, full - 6));
+        assert!(r.move_part(&c, Place::Bag(0), Place::Creature));
+        assert_eq!((r.max_hp(&c), r.hp), (full, full));
+    }
+
+    #[test]
+    fn foraging_after_wins_fills_the_bar_and_a_full_bar_cultivates_mass() {
+        let c = content();
+        let f = &c.rules.forage;
+        let mut r = Run::new(&c, 0, 1);
+        assert!(!r.reward_forage(&c), "only after a win");
+        let mut wins = 0;
+        while r.forage < f.full {
+            r.stage = reward(vec![]);
+            assert!(r.reward_forage(&c));
+            assert!(!r.reward_forage(&c), "once a win");
+            r.reward_done();
+            wins += 1;
+        }
+        assert!((3..=4).contains(&wins), "a full bar every 3 or 4 wins: {wins}");
+        let mass = r.me.mass;
+        assert!(r.cultivate(&c));
+        assert_eq!(r.me.mass, mass + 1);
+        assert!(r.forage < f.full);
+        assert!(!r.cultivate(&c));
     }
 
     #[test]
@@ -656,15 +1002,23 @@ pub(crate) mod tests {
         }
     }
 
+    fn encounter(c: &Content, r: &mut Run, id: &str) -> Stage {
+        let i = c.encounters.iter().position(|e| e.id == id).unwrap();
+        r.deck = vec![i];
+        r.drawn = 0;
+        let s = r.draw_encounter(c);
+        r.stage = s.clone();
+        s
+    }
+
     #[test]
     fn every_encounter_applies_without_killing() {
         let c = content();
-        for i in 0..c.encounters.len() {
+        for e in &c.encounters {
             let mut r = Run::new(&c, 0, 1);
             r.hp = 1;
-            r.deck = vec![i];
-            let s = r.draw_encounter(&c);
-            assert!(r.hp >= 1, "{}", c.encounters[i].id);
+            let s = encounter(&c, &mut r, &e.id);
+            assert!(r.hp >= 1, "{}", e.id);
             let Stage::Encounter { lines, .. } = s else {
                 panic!()
             };
@@ -676,6 +1030,59 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn the_old_grafter_upgrades_the_part_the_player_chooses() {
+        let c = content();
+        let mut r = Run::new(&c, 0, 1);
+        let s = encounter(&c, &mut r, "old_grafter");
+        assert!(matches!(s, Stage::Encounter { upgrade: true, .. }));
+        assert!(r.move_part(&c, Place::Body(0), Place::Upgrade));
+        assert_eq!(r.me.parts[0].level, 1);
+        assert!(!r.move_part(&c, Place::Body(1), Place::Upgrade), "one upgrade");
+        // an upgrade can go to a part in the bag too
+        let mut r = Run::new(&c, 0, 1);
+        r.bag.push(part(&c, "stinger"));
+        encounter(&c, &mut r, "old_grafter");
+        assert!(r.move_part(&c, Place::Bag(0), Place::Upgrade));
+        assert_eq!(r.bag[0].level, 1);
+    }
+
+    #[test]
+    fn blight_takes_a_level_off_a_part() {
+        let c = content();
+        let mut r = Run::new(&c, 0, 1);
+        encounter(&c, &mut r, "blight");
+        let levels: Vec<i32> = r.me.parts.iter().map(|g| g.level).collect();
+        assert_eq!(levels.iter().sum::<i32>(), -1, "{levels:?}");
+    }
+
+    #[test]
+    fn a_find_waits_to_be_placed_and_is_left_behind_if_not() {
+        let c = content();
+        let mut r = Run::new(&c, 0, 1);
+        let s = encounter(&c, &mut r, "strange_spores");
+        let Stage::Encounter { found: Some(g), .. } = s else {
+            panic!("nothing found")
+        };
+        assert!(c.parts[g.part].set.is_empty(), "spores grow a wild part");
+        assert!(r.move_part(&c, Place::Offer(0), Place::Bag(0)));
+        assert_eq!(r.bag, vec![g]);
+        assert!(!r.move_part(&c, Place::Offer(0), Place::Bag(1)), "taken once");
+        let mut r = Run::new(&c, 0, 1);
+        encounter(&c, &mut r, "strange_spores");
+        assert!(r.encounter_done());
+        assert!(r.bag.is_empty());
+    }
+
+    #[test]
+    fn the_packrat_takes_from_the_bag() {
+        let c = content();
+        let mut r = Run::new(&c, 0, 1);
+        r.bag = vec![part(&c, "stinger")];
+        encounter(&c, &mut r, "packrat");
+        assert!(r.bag.is_empty());
+    }
+
+    #[test]
     fn the_shop_sells_each_offer_once_and_refuses_what_you_cannot_afford() {
         let c = content();
         let mut r = Run::new(&c, 0, 1);
@@ -684,16 +1091,17 @@ pub(crate) mod tests {
         r.acorns = 0;
         assert!(!r.shop_buy(&c, 0));
         r.acorns = 500;
+        let price = r.shop.as_ref().unwrap().offers[0].price;
         assert!(r.shop_buy(&c, 0));
-        if matches!(r.stage, Stage::Graft { .. }) {
-            r.graft_decline();
-        }
+        assert_eq!(r.acorns, 500 - price);
         assert_eq!(r.stage, Stage::Shop);
         assert!(!r.shop_buy(&c, 0), "sold");
         let mass = r.me.mass;
+        let acorns = r.acorns;
         assert!(r.shop_mass(&c));
         assert!(!r.shop_mass(&c), "once a visit");
         assert_eq!(r.me.mass, mass + 1);
+        assert_eq!(acorns - r.acorns, 20, "a unit of mass costs 20 acorns");
         assert!(r.shop_leave());
         assert_eq!(r.stage, Stage::Map);
     }
@@ -709,11 +1117,12 @@ pub(crate) mod tests {
     }
 
     /// A player who always takes the first way on, fights everything out,
-    /// takes health after each win and rests to heal: every run ends, in
-    /// victory or death, on the path.
+    /// forages, takes health or a part after each win and rests to heal:
+    /// every run ends, in victory or death, on the path.
     fn autoplay(c: &Content, seed: u64) -> Stage {
         let mut r = Run::new(c, (seed % 3) as usize, seed);
-        for _ in 0..200 {
+        for _ in 0..300 {
+            r.cultivate(c);
             match r.stage.clone() {
                 Stage::Map => {
                     let k = r.choices()[0];
@@ -724,14 +1133,19 @@ pub(crate) mod tests {
                     r.conclude(c);
                 }
                 Stage::Reward { parts, .. } => {
+                    r.reward_forage(c);
                     if seed.is_multiple_of(2) {
                         r.reward_hp(c);
                     } else {
                         r.reward_part(c, parts.len() - 1);
+                        r.move_part(c, Place::Bag(0), Place::Body(0));
                     }
+                    r.reward_done();
                 }
                 Stage::Encounter { .. } => {
-                    r.encounter_done(c);
+                    r.encounter_take(c);
+                    r.move_part(c, Place::Body(0), Place::Upgrade);
+                    r.encounter_done();
                 }
                 Stage::Shop => {
                     r.shop_heal(c);
@@ -740,11 +1154,10 @@ pub(crate) mod tests {
                 Stage::Rest => {
                     r.rest_heal(c);
                 }
-                Stage::Graft { .. } => {
-                    r.graft_replace(c, 0);
-                }
                 s @ (Stage::Dead | Stage::Won) => return s,
             }
+            assert!(r.me.fits(c), "seed {seed}: a part without a slot");
+            assert!(r.bag.len() <= c.rules.bag_size);
         }
         panic!("seed {seed}: the run never ended")
     }
@@ -753,13 +1166,13 @@ pub(crate) mod tests {
     fn every_run_ends() {
         let c = content();
         let mut won = 0;
-        for seed in 0..60 {
+        for seed in 0..200 {
             if autoplay(&c, seed) == Stage::Won {
                 won += 1;
             }
         }
         // a careless player wins now and then and loses more often
-        assert!(won >= 1, "an autoplayer never won ({won}/60)");
-        assert!(won <= 45, "an autoplayer won too often ({won}/60)");
+        assert!(won >= 1, "an autoplayer never won ({won}/200)");
+        assert!(won <= 100, "an autoplayer won too often ({won}/200)");
     }
 }

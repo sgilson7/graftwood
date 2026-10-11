@@ -1,0 +1,70 @@
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{xcolor}
+% Palette: Sam_Comm_final.png by eye, and the woods' own colours.
+\definecolor{ink}{HTML}{3B2340}
+\definecolor{sky}{HTML}{EFC46A}
+\definecolor{skyhi}{HTML}{F5DA92}
+\definecolor{skylow}{HTML}{E9B060}
+\definecolor{cloud}{HTML}{F2D58A}
+\definecolor{dusk}{HTML}{E99A6A}
+\definecolor{duskhi}{HTML}{F0B07E}
+\definecolor{dusklow}{HTML}{C9746A}
+\definecolor{coral}{HTML}{E88A73}
+\definecolor{salmon}{HTML}{EE9F7E}
+\definecolor{rose}{HTML}{E47A7E}
+\definecolor{peach}{HTML}{F0B07E}
+\definecolor{grass}{HTML}{8DBB7E}
+\definecolor{grassdark}{HTML}{6FA77A}
+\definecolor{grasslight}{HTML}{A9C97F}
+\definecolor{pine}{HTML}{5E9C6A}
+\definecolor{teal}{HTML}{4FA3A5}
+\definecolor{farpine}{HTML}{B7C98A}
+\definecolor{hill}{HTML}{C9C078}
+\definecolor{hillfar}{HTML}{E3C483}
+\definecolor{clearing}{HTML}{B9CF86}
+\definecolor{dirt}{HTML}{D3A77D}
+\definecolor{dirtdark}{HTML}{B98A64}
+\definecolor{stone}{HTML}{A8B0A4}
+\definecolor{trunk}{HTML}{B9835A}
+\definecolor{trunkdark}{HTML}{8C5A44}
+\definecolor{mushroom}{HTML}{F26B38}
+\definecolor{silk}{HTML}{F6E7C4}
+\definecolor{flower}{HTML}{FF6F91}
+\definecolor{flowergold}{HTML}{FFB000}
+\definecolor{leafgold}{HTML}{F2B53A}
+\definecolor{mud}{HTML}{B9835A}
+\definecolor{muddark}{HTML}{8C5A44}
+\definecolor{cream}{HTML}{EBC592}
+\definecolor{blush}{HTML}{F08A8A}
+\definecolor{bone}{HTML}{FBF4E4}
+\definecolor{crabshell}{HTML}{D2463C}
+\definecolor{crabdark}{HTML}{A8323A}
+\definecolor{wing}{HTML}{CDE8E0}
+\definecolor{goldbelt}{HTML}{F2B53A}
+\definecolor{stag}{HTML}{A8693C}
+\definecolor{stagdark}{HTML}{7E4A2C}
+\definecolor{antler}{HTML}{E2C79A}
+\definecolor{moss}{HTML}{6FA77A}
+\definecolor{eyeglow}{HTML}{FFE38A}
+\definecolor{chitin}{HTML}{6B4E71}
+\definecolor{chitinhi}{HTML}{8E6E94}
+\definecolor{acorn}{HTML}{C98A55}
+\definecolor{acorncap}{HTML}{8C5A44}
+\definecolor{fire}{HTML}{FF8A3D}
+\definecolor{firehi}{HTML}{FFE38A}
+\definecolor{jar}{HTML}{CDE8E0}
+\definecolor{white}{HTML}{FFFFFF}
+\begin{document}
+\begin{tikzpicture}
+\clip (0,0) rectangle (4,4);
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=stag] plot[smooth cycle, tension=0.6] coordinates {(1.05,1.5) (2,2.25) (2.95,1.5) (2.7,0.75) (2,0.55) (1.3,0.75)};
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=stag] plot[smooth cycle, tension=0.55] coordinates {(1.173,2.35) (1.157,2.467) (1.111,2.573) (1.04,2.657) (0.95,2.711) (0.85,2.73) (0.75,2.711) (0.66,2.657) (0.589,2.573) (0.543,2.467) (0.527,2.35) (0.543,2.233) (0.589,2.127) (0.66,2.043) (0.75,1.989) (0.85,1.97) (0.95,1.989) (1.04,2.043) (1.111,2.127) (1.157,2.233)};
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=stag] plot[smooth cycle, tension=0.55] coordinates {(1.89,3.05) (1.873,3.174) (1.825,3.285) (1.75,3.374) (1.655,3.43) (1.55,3.45) (1.445,3.43) (1.35,3.374) (1.275,3.285) (1.227,3.174) (1.21,3.05) (1.227,2.926) (1.275,2.815) (1.35,2.726) (1.445,2.67) (1.55,2.65) (1.655,2.67) (1.75,2.726) (1.825,2.815) (1.873,2.926)};
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=stag] plot[smooth cycle, tension=0.55] coordinates {(2.79,3.05) (2.773,3.174) (2.725,3.285) (2.65,3.374) (2.555,3.43) (2.45,3.45) (2.345,3.43) (2.25,3.374) (2.175,3.285) (2.127,3.174) (2.11,3.05) (2.127,2.926) (2.175,2.815) (2.25,2.726) (2.345,2.67) (2.45,2.65) (2.555,2.67) (2.65,2.726) (2.725,2.815) (2.773,2.926)};
+\filldraw[draw=ink, line width=2.6pt, line join=round, fill=stag] plot[smooth cycle, tension=0.55] coordinates {(3.473,2.35) (3.457,2.467) (3.411,2.573) (3.34,2.657) (3.25,2.711) (3.15,2.73) (3.05,2.711) (2.96,2.657) (2.889,2.573) (2.843,2.467) (2.827,2.35) (2.843,2.233) (2.889,2.127) (2.96,2.043) (3.05,1.989) (3.15,1.97) (3.25,1.989) (3.34,2.043) (3.411,2.127) (3.457,2.233)};
+\filldraw[draw=ink, line width=1.56pt, line join=round, fill=bone] (0.73,2.7) -- (0.97,2.7) -- (0.85,3) -- cycle;
+\filldraw[draw=ink, line width=1.56pt, line join=round, fill=bone] (1.43,3.45) -- (1.67,3.45) -- (1.55,3.75) -- cycle;
+\filldraw[draw=ink, line width=1.56pt, line join=round, fill=bone] (2.33,3.45) -- (2.57,3.45) -- (2.45,3.75) -- cycle;
+\filldraw[draw=ink, line width=1.56pt, line join=round, fill=bone] (3.03,2.7) -- (3.27,2.7) -- (3.15,3) -- cycle;
+\end{tikzpicture}
+\end{document}

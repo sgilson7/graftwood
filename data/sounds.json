@@ -343,6 +343,104 @@
     "dur": 0.09,
     "gain": 0.05
    }
+  ],
+  "forage": [
+   {
+    "type": "noise",
+    "filter": "highpass",
+    "freq": 2500,
+    "q": 0.8,
+    "at": 0,
+    "attack": 0.01,
+    "dur": 0.18,
+    "gain": 0.12
+   },
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 520,
+    "to": 780,
+    "at": 0.08,
+    "attack": 0.005,
+    "dur": 0.12,
+    "gain": 0.08
+   }
+  ],
+  "bag": [
+   {
+    "type": "noise",
+    "filter": "bandpass",
+    "freq": 900,
+    "q": 1.0,
+    "at": 0,
+    "attack": 0.01,
+    "dur": 0.14,
+    "gain": 0.2
+   },
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 330,
+    "to": 260,
+    "at": 0.02,
+    "attack": 0.005,
+    "dur": 0.1,
+    "gain": 0.08
+   }
+  ],
+  "bin": [
+   {
+    "type": "osc",
+    "wave": "sine",
+    "from": 300,
+    "to": 90,
+    "at": 0,
+    "attack": 0.005,
+    "dur": 0.3,
+    "gain": 0.14
+   },
+   {
+    "type": "noise",
+    "filter": "lowpass",
+    "freq": 400,
+    "q": 1.0,
+    "at": 0.05,
+    "attack": 0.01,
+    "dur": 0.2,
+    "gain": 0.15
+   }
+  ],
+  "upgrade": [
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 523,
+    "to": 523,
+    "at": 0,
+    "attack": 0.005,
+    "dur": 0.12,
+    "gain": 0.09
+   },
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 659,
+    "to": 659,
+    "at": 0.1,
+    "attack": 0.005,
+    "dur": 0.12,
+    "gain": 0.09
+   },
+   {
+    "type": "osc",
+    "wave": "triangle",
+    "from": 784,
+    "to": 784,
+    "at": 0.2,
+    "attack": 0.005,
+    "dur": 0.25,
+    "gain": 0.1
+   }
   ]
  }
 }

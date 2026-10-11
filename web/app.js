@@ -6,6 +6,7 @@ import init, { Game, numbers, mesh } from "./pkg/gw_shim.js";
 import { makeRenderer } from "./gl.js";
 import { makeScreens } from "./screens.js";
 import { makeHud } from "./hud.js";
+import { makeDrag } from "./drag.js";
 import { setup as setupSound, wake, toggleMute, play } from "./sound.js";
 
 const BUILD = "__BUILD__";
@@ -87,7 +88,11 @@ async function start() {
     refresh(true);
   };
 
-  const screens = makeScreens(game, copy, act);
+  const drag = makeDrag(game, act);
+  drag.target(el("creature-zone"), "creature", 0);
+  drag.target(el("s-bin"), "bin", 0);
+  drag.target(el("e-stump"), "upgrade", 0);
+  const screens = makeScreens(game, copy, act, drag);
   const hud = makeHud(game, copy, N, act);
 
   el("begin").addEventListener("click", act(() => game.begin()));
@@ -95,14 +100,15 @@ async function start() {
   el("conclude").addEventListener("click", act(() => game.conclude()));
   el("skip").addEventListener("click", act(() => game.skip()));
   el("reward-hp").addEventListener("click", act(() => game.reward_hp()));
-  el("reward-skip").addEventListener("click", act(() => game.reward_skip()));
+  el("reward-forage").addEventListener("click", act(() => game.reward_forage()));
+  el("reward-done").addEventListener("click", act(() => game.reward_done()));
+  el("cultivate").addEventListener("click", act(() => game.cultivate()));
   el("encounter-done").addEventListener("click", act(() => game.encounter_done()));
   el("shop-mass").addEventListener("click", act(() => game.shop_mass()));
   el("shop-heal").addEventListener("click", act(() => game.shop_heal()));
   el("shop-leave").addEventListener("click", act(() => game.shop_leave()));
   el("rest-heal").addEventListener("click", act(() => game.rest_heal()));
   el("rest-grow").addEventListener("click", act(() => game.rest_grow()));
-  el("graft-decline").addEventListener("click", act(() => game.graft_decline()));
   el("to-title").addEventListener("click", act(() => game.to_title()));
   const abandon = el("abandon");
   abandon.addEventListener("click", () => {
@@ -139,11 +145,10 @@ async function start() {
     encounter: ["encounter", "sheet"],
     shop: ["shop", "sheet"],
     rest: ["rest", "sheet"],
-    graft: ["graft", "sheet"],
     dead: ["end"],
     won: ["end"],
   };
-  const all = ["title", "choose", "map", "sheet", "battle", "reward", "encounter", "shop", "rest", "graft", "end"];
+  const all = ["title", "choose", "map", "sheet", "battle", "reward", "encounter", "shop", "rest", "end"];
 
   function refresh(again) {
     const mode = game.mode();

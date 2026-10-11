@@ -103,6 +103,7 @@ button.armed { background: var(--red); color: #fff; }
 .slots { display: flex; gap: 3px; }
 .slots i { width: 11px; height: 11px; border: 2px solid var(--ink); border-radius: 50%; display: inline-block; }
 .slots i.used { background: var(--teal); }
+.slots i.head { border-radius: 3px; border-style: dashed; }
 
 /* ---- the map ---- */
 .map-panel { width: min(480px, 44vw); }
@@ -137,6 +138,7 @@ button.armed { background: var(--red); color: #fff; }
 .chip.guard { background: #ddd6ec; }
 .chip.evasion { background: #cfe8e8; }
 .chip.slow { background: #f6d2c5; }
+.chip.regen { background: #fff0b8; }
 .timers { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
 .timers li { display: grid; grid-template-columns: 1fr 90px 34px; align-items: center; gap: 6px; font-size: 0.82rem; border-left: 6px solid var(--sage); padding: 1px 4px; border-radius: 4px; }
 .timers li.fired { background: #fff3d6; }
@@ -170,7 +172,56 @@ button.armed { background: var(--red); color: #fff; }
 .tag.good { background: var(--sage); }
 .tag.bad { background: var(--salmon); }
 #e-lines { margin: 0; padding-left: 18px; font-weight: 700; }
-.shed-list { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ---- sets, the bag, the bin, foraging and the grafter's stump ---- */
+.set-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 0.68rem; text-transform: uppercase; font-weight: 800; border: 2px solid var(--ink); border-radius: 999px; padding: 0 7px 0 2px; background: #fffaf0; white-space: nowrap; }
+.set-badge img { width: 18px; height: 18px; display: block; }
+.set-badge.wild { padding-left: 7px; background: #f3e1f0; border-style: dashed; }
+.set-bug { background: #fbe6b0; }
+.set-rodent { background: #f0d6bd; }
+.set-beast { background: #f6cbbf; }
+.set-critter { background: #cfe8e8; }
+.card-head { flex-wrap: wrap; }
+.card-name { margin-right: auto; }
+.card.upgraded { box-shadow: 0 0 0 3px var(--gold); }
+.card.withered { filter: saturate(0.5); }
+.card-next { margin-top: 6px; padding: 4px 8px; background: #fff3d6; border: 2px dashed var(--ink); border-radius: 8px; font-size: 0.85rem; }
+.sets { display: flex; flex-direction: column; gap: 4px; }
+.sets:empty { display: none; }
+.set-chip { display: grid; grid-template-columns: 24px auto 1fr; align-items: center; gap: 6px; border: 2px solid var(--ink); border-radius: 8px; padding: 2px 8px 2px 3px; font-size: 0.78rem; opacity: 0.7; }
+.set-chip.active { opacity: 1; box-shadow: 2px 2px 0 var(--ink); }
+.set-chip img { width: 24px; height: 24px; }
+.set-chip span { font-size: 0.74rem; }
+.ui-icon { width: 28px; height: 28px; display: block; flex: none; }
+.forage-row { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; text-transform: uppercase; }
+.bar.forage { flex: 1; height: 18px; }
+.bar.forage .fill { background: var(--coral); }
+.bar.forage span { line-height: 12px; font-size: 0.75rem; }
+#cultivate { background: var(--gold); }
+.forage-box { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.forage-box p { font-weight: 700; }
+.bag-head { display: flex; align-items: center; gap: 6px; }
+.bag-head h4 { margin: 0; font-family: var(--display); text-transform: uppercase; }
+.small-hint { font-size: 0.78rem; }
+.bin { display: flex; align-items: center; gap: 8px; border: 3px dashed var(--ink); border-radius: 10px; padding: 4px 10px; font-size: 0.78rem; background: #f6dccf; }
+.stump { display: flex; align-items: center; gap: 10px; border: 3px dashed var(--ink); border-radius: 12px; padding: 6px 12px; background: #fff3d6; font-family: var(--display); text-transform: uppercase; font-weight: 800; }
+.stump img { width: 64px; height: 64px; }
+#e-upgrade h3 { margin: 4px 0 0; text-transform: uppercase; }
+
+/* ---- dragging a part ---- */
+[data-from] { cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.card.lifted { opacity: 0.35; }
+.drag-ghost { position: fixed; z-index: 50; pointer-events: none; translate: 14px 14px; width: 190px; rotate: -3deg; box-shadow: 4px 4px 0 var(--ink); padding: 4px 8px !important; opacity: 0.92; }
+.drag-ghost .card-rules, .drag-ghost .card-flavour, .drag-ghost .card-socket, .drag-ghost .card-next, .drag-ghost button { display: none; }
+body.dragging, body.dragging * { cursor: grabbing; }
+.drop-ok { outline: 4px solid var(--moss); outline-offset: 2px; background: #e6f4dc !important; }
+.drop-no { outline: 4px dashed var(--red); outline-offset: 2px; }
+#creature-zone { position: fixed; z-index: 4; display: none; pointer-events: none; align-items: flex-end; justify-content: center; border: 4px dashed var(--ink); border-radius: 50%; }
+#creature-zone span { background: var(--paper); border: 3px solid var(--ink); border-radius: 999px; padding: 2px 12px; font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 0.85rem; translate: 0 50%; }
+body.dragging[data-mode="map"] #creature-zone, body.dragging[data-mode="reward"] #creature-zone,
+body.dragging[data-mode="encounter"] #creature-zone, body.dragging[data-mode="shop"] #creature-zone,
+body.dragging[data-mode="rest"] #creature-zone { display: flex; pointer-events: auto; }
+#creature-zone.drop-ok { background: rgba(141, 187, 126, 0.25) !important; }
 
 #message { position: fixed; left: 50%; top: 50%; translate: -50% -50%; max-width: 80vw; text-align: center; font-weight: 700; z-index: 20; }
 #message:empty { display: none; }

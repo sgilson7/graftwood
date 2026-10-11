@@ -16,6 +16,11 @@
   "snailshell": "E99A6A", "snailbody": "D9C7A0", "grey": "9AA3A0", "ant": "9B3D3D", "spider": "4F4460",
   "crab": "E06D4F", "crayfish": "D9765F", "frog": "7FB069", "hedgehog": "8C6A50", "fox": "E07A3E",
   "owl": "A47C4C", "badger": "6E6478", "squirrel": "C9604F", "mantis": "A9C97F", "lobster": "B3262E",
-  "stag": "A8693C", "poison": "9BE05A", "glowheal": "FFE38A", "hit": "FFFFFF"
+  "stag": "A8693C", "poison": "9BE05A", "glowheal": "FFE38A", "hit": "FFFFFF",
+  "bear": "8A5A3C", "duck": "C7A26A", "salmonfish": "D98C8C", "silver": "C8D0D4", "fin": "E2A0A0",
+  "skunk": "3E3A46", "possum": "B8B0B4", "jackrabbit": "C9A57A", "snake": "8FB04A", "turtle": "7E9A55",
+  "turtleshell": "8A6A3A", "turkey": "6E4A3A", "wattle": "D8463C", "turkeyfan": "B07A4A", "hawk": "9A6A44",
+  "deer": "C08552", "unicorn": "F7F1FA", "dragon": "5FAF8F", "dragonscale": "3F8F7A", "fire": "FF7A2A",
+  "swan": "FBF7F0", "honey": "F2B53A"
  }
 }

@@ -44,6 +44,7 @@ export function makeHud(game, copy, N, act) {
     const guard = chip("guard", copy.guard);
     const evasion = chip("evasion", copy.evasion);
     const slow = chip("slow", copy.slow);
+    const regen = chip("regen", copy.regen);
     root.append(chips);
     const list = make("ul", "timers");
     const rows = f.parts.map((p) => {
@@ -58,7 +59,7 @@ export function makeHud(game, copy, N, act) {
       return { li, t, secs };
     });
     root.append(list);
-    return { fill, text, poison, guard, evasion, slow, rows };
+    return { fill, text, poison, guard, evasion, slow, regen, rows };
   }
 
   function fillPanel(p, f) {
@@ -72,6 +73,8 @@ export function makeHud(game, copy, N, act) {
     p.evasion.c.hidden = !f.evasion;
     p.slow.v.textContent = `${f.slow}%`;
     p.slow.c.hidden = !f.slow;
+    p.regen.v.textContent = f.regen;
+    p.regen.c.hidden = !f.regen;
     f.parts.forEach((part, i) => {
       const r = p.rows[i];
       if (!r) return;

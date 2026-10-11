@@ -115,11 +115,38 @@ impl Game {
     pub fn reward_part(&mut self, i: u32) -> bool {
         self.inner.reward_part(i as usize)
     }
-    pub fn reward_skip(&mut self) -> bool {
-        self.inner.reward_skip()
+    pub fn reward_forage(&mut self) -> bool {
+        self.inner.reward_forage()
+    }
+    pub fn reward_done(&mut self) -> bool {
+        self.inner.reward_done()
+    }
+    pub fn cultivate(&mut self) -> bool {
+        self.inner.cultivate()
+    }
+    pub fn encounter_take(&mut self) -> bool {
+        self.inner.encounter_take()
     }
     pub fn encounter_done(&mut self) -> bool {
         self.inner.encounter_done()
+    }
+    /// A drag and drop: a part from one place to another, each named by a
+    /// word ("body", "bag", "offer", "creature", "bin", "upgrade") and a
+    /// number.
+    pub fn move_part(&mut self, from: &str, i: u32, to: &str, j: u32) -> bool {
+        self.inner.move_part(from, i as usize, to, j as usize)
+    }
+    pub fn can_move(&self, from: &str, i: u32, to: &str, j: u32) -> bool {
+        self.inner.can_move(from, i as usize, to, j as usize)
+    }
+    pub fn hover(&mut self, from: &str, i: u32) -> bool {
+        self.inner.hover(from, i as usize)
+    }
+    pub fn hover_end(&mut self) -> bool {
+        self.inner.hover_end()
+    }
+    pub fn zone(&self) -> String {
+        self.inner.zone_json()
     }
     pub fn shop_buy(&mut self, i: u32) -> bool {
         self.inner.shop_buy(i as usize)
@@ -130,9 +157,6 @@ impl Game {
     pub fn shop_heal(&mut self) -> bool {
         self.inner.shop_heal()
     }
-    pub fn shop_shed(&mut self, i: u32) -> bool {
-        self.inner.shop_shed(i as usize)
-    }
     pub fn shop_leave(&mut self) -> bool {
         self.inner.shop_leave()
     }
@@ -141,12 +165,6 @@ impl Game {
     }
     pub fn rest_grow(&mut self) -> bool {
         self.inner.rest_grow()
-    }
-    pub fn graft_replace(&mut self, i: u32) -> bool {
-        self.inner.graft_replace(i as usize)
-    }
-    pub fn graft_decline(&mut self) -> bool {
-        self.inner.graft_decline()
     }
     pub fn abandon(&mut self) -> bool {
         self.inner.abandon()

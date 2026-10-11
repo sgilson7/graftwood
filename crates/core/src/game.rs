@@ -7,12 +7,12 @@ use serde_json::{json, Value};
 
 use crate::combat::{period_ticks, Ev, Fight, FOE, PLAYER, TICKS_PER_SECOND};
 use crate::content::{fill, ActionKind, Content, Part};
-use crate::creature::Creature;
+use crate::creature::{Creature, Graft};
 use crate::fx::{self, deg, int, ONE};
 use crate::geom::{v3, V3};
 use crate::mesh::{self, Mesh};
 use crate::render::{self, Batch, Camera, DYNAMIC_BUFFER, STATIC_BUFFER};
-use crate::run::{Run, Stage};
+use crate::run::{Place, Run, Stage};
 use crate::scene;
 
 /// The page's clock is in microseconds; a frame longer than this (a hidden
@@ -65,10 +65,13 @@ pub struct Game {
     draws: Vec<u32>,
     camera: Camera,
     sounds: Vec<&'static str>,
+    /// a part being dragged over the creature, drawn where it would go
+    ghost: Option<Graft>,
 }
 
-fn sound_of(ev: Ev) -> &'static str {
-    match ev {
+/// The sound an event makes; regeneration, once a second, makes none.
+fn sound_of(ev: Ev) -> Option<&'static str> {
+    Some(match ev {
         Ev::Hit(ActionKind::Ranged) => "thwack",
         Ev::Hit(_) => "bite",
         Ev::Dodge => "dodge",
@@ -79,13 +82,32 @@ fn sound_of(ev: Ev) -> &'static str {
         Ev::Evade => "hop",
         Ev::Thorns => "thorn",
         Ev::Fatigue => "fatigue",
-    }
+        Ev::Regen => return None,
+    })
 }
 
 /// A Q16 percentage as CSS: "37.50%".
 fn css_pct(q: i32) -> String {
     let hundredths = (q as i64 * 100 / ONE as i64) as i32;
     format!("{}.{:02}%", hundredths / 100, hundredths.rem_euclid(100))
+}
+
+/// Tenths as a number to read: 5 is "0.5", 10 is "1".
+pub fn tenths(n: i32) -> String {
+    if n % 10 == 0 {
+        (n / 10).to_string()
+    } else {
+        format!("{}.{}", n / 10, (n % 10).abs())
+    }
+}
+
+/// A modifier in words; regeneration is counted in tenths.
+fn mod_value(name: &str, n: i32) -> String {
+    if name == "regen" {
+        tenths(n)
+    } else {
+        n.to_string()
+    }
 }
 
 /// Ticks as seconds to a tenth: "2.5".
@@ -135,6 +157,7 @@ impl Game {
             draws: Vec::new(),
             camera: Camera::looking_at(v3(0, int(3), int(9)), V3::ZERO, deg(50)),
             sounds: Vec::new(),
+            ghost: None,
         };
         let _ = ink;
         g.draw();
@@ -171,9 +194,10 @@ impl Game {
                 f.tick += if was_over { frames } else { 0 };
             }
             for e in f.events.iter().filter(|e| e.tick > before) {
-                let s = sound_of(e.ev);
-                if !self.sounds.contains(&s) {
-                    self.sounds.push(s);
+                if let Some(s) = sound_of(e.ev) {
+                    if !self.sounds.contains(&s) {
+                        self.sounds.push(s);
+                    }
                 }
             }
             if f.over() && !was_over {
@@ -311,23 +335,88 @@ impl Game {
     pub fn reward_part(&mut self, i: usize) -> bool {
         self.with_run(|r, c| r.reward_part(c, i), "graft")
     }
-    pub fn reward_skip(&mut self) -> bool {
-        self.with_run(|r, _| r.reward_skip(), "click")
+    pub fn reward_forage(&mut self) -> bool {
+        self.with_run(|r, c| r.reward_forage(c), "forage")
+    }
+    pub fn reward_done(&mut self) -> bool {
+        self.with_run(|r, _| r.reward_done(), "click")
+    }
+    pub fn cultivate(&mut self) -> bool {
+        self.with_run(|r, c| r.cultivate(c), "graft")
+    }
+    pub fn encounter_take(&mut self) -> bool {
+        self.with_run(|r, c| r.encounter_take(c), "graft")
     }
     pub fn encounter_done(&mut self) -> bool {
-        self.with_run(|r, c| r.encounter_done(c), "click")
+        self.with_run(|r, _| r.encounter_done(), "click")
     }
     pub fn shop_buy(&mut self, i: usize) -> bool {
         self.with_run(|r, c| r.shop_buy(c, i), "buy")
+    }
+
+    /// Moves a part from one place to another (`Place::parse` names them):
+    /// what a drag and drop does.
+    pub fn move_part(&mut self, from: &str, i: usize, to: &str, j: usize) -> bool {
+        self.ghost = None;
+        let (Some(a), Some(b)) = (Place::parse(from, i), Place::parse(to, j)) else {
+            return false;
+        };
+        let sound = match b {
+            Place::Bin => "bin",
+            Place::Upgrade => "upgrade",
+            Place::Bag(_) => "bag",
+            _ => "graft",
+        };
+        self.with_run(|r, c| r.move_part(c, a, b), sound)
+    }
+
+    /// Whether that move would be allowed: the page marks a drop target
+    /// with it while a part is dragged over it.
+    pub fn can_move(&self, from: &str, i: usize, to: &str, j: usize) -> bool {
+        let (Some(a), Some(b), Some(r)) = (Place::parse(from, i), Place::parse(to, j), self.run.as_ref())
+        else {
+            return false;
+        };
+        r.can_move(&self.content, a, b)
+    }
+
+    /// A part dragged over the creature: drawn on it, glowing, if it would
+    /// fit. Returns whether it would.
+    pub fn hover(&mut self, from: &str, i: usize) -> bool {
+        self.ghost = None;
+        let Some(r) = self.run.as_ref() else {
+            return false;
+        };
+        let part = match Place::parse(from, i) {
+            Some(Place::Bag(k)) => r.bag.get(k).copied(),
+            Some(Place::Offer(k)) => r.offer(k),
+            _ => None,
+        };
+        let Some(g) = part else {
+            return false;
+        };
+        let Some(place) = Place::parse(from, i) else {
+            return false;
+        };
+        if !r.can_move(&self.content, place, Place::Creature) {
+            return false;
+        }
+        self.ghost = Some(g);
+        self.draw();
+        true
+    }
+
+    pub fn hover_end(&mut self) -> bool {
+        let had = self.ghost.is_some();
+        self.ghost = None;
+        self.draw();
+        had
     }
     pub fn shop_mass(&mut self) -> bool {
         self.with_run(|r, c| r.shop_mass(c), "buy")
     }
     pub fn shop_heal(&mut self) -> bool {
         self.with_run(|r, c| r.shop_heal(c), "heal")
-    }
-    pub fn shop_shed(&mut self, i: usize) -> bool {
-        self.with_run(|r, c| r.shop_shed(c, i), "buy")
     }
     pub fn shop_leave(&mut self) -> bool {
         self.with_run(|r, _| r.shop_leave(), "click")
@@ -337,12 +426,6 @@ impl Game {
     }
     pub fn rest_grow(&mut self) -> bool {
         self.with_run(|r, c| r.rest_grow(c), "graft")
-    }
-    pub fn graft_replace(&mut self, i: usize) -> bool {
-        self.with_run(|r, c| r.graft_replace(c, i), "graft")
-    }
-    pub fn graft_decline(&mut self) -> bool {
-        self.with_run(|r, _| r.graft_decline(), "click")
     }
 
     /// Gives up the run: it counts as a loss.
@@ -400,7 +483,6 @@ impl Game {
             (_, Some(Stage::Encounter { .. })) => "encounter",
             (_, Some(Stage::Shop)) => "shop",
             (_, Some(Stage::Rest)) => "rest",
-            (_, Some(Stage::Graft { .. })) => "graft",
             (_, Some(Stage::Dead)) => "dead",
             (_, Some(Stage::Won)) => "won",
             (_, None) => "title",
@@ -411,13 +493,14 @@ impl Game {
         self.content.word(key)
     }
 
-    /// One part as the page shows it: name, socket, its rules in words with
-    /// times for a creature this slowed and hasted, and its flavour.
-    fn card(&self, p: usize, slow: i32, haste: i32) -> Value {
+    /// A part's rules in words at a level, with times for a creature this
+    /// slowed and hasted.
+    fn rules_of(&self, g: Graft, slow: i32, haste: i32) -> Vec<String> {
         let c = &self.content;
-        let part: &Part = &c.parts[p];
+        let part: &Part = &c.parts[g.part];
+        let u = &c.rules.upgrade;
         let mut rules = Vec::new();
-        if let Some(a) = &part.action {
+        if let Some(a) = part.action_at(g.level, u) {
             let t = period_ticks(c, a.every_ms, slow, haste);
             let poison = crate::combat::ms_to_ticks(c.rules.combat.poison_every_ms);
             rules.push(fill(
@@ -430,44 +513,137 @@ impl Game {
                 ],
             ));
         }
-        for (k, v) in &part.mods {
-            rules.push(fill(&self.word(&format!("mod_{k}")), &[("n", v.to_string())]));
+        for k in part.mods.keys() {
+            let n = part.modifier_at(k, g.level, u);
+            rules.push(fill(&self.word(&format!("mod_{k}")), &[("n", mod_value(k, n))]));
         }
+        rules
+    }
+
+    /// One part as the page shows it: name (with its level), socket, set,
+    /// its rules in words, and its flavour.
+    fn card(&self, g: Graft, slow: i32, haste: i32) -> Value {
+        let c = &self.content;
+        let part: &Part = &c.parts[g.part];
+        let set = c.set_index(&part.set).map(|i| {
+            let s = &c.rules.sets[i];
+            json!({ "id": s.id, "name": self.word(&format!("set_{}", s.id)) })
+        });
         json!({
             "id": part.id,
-            "name": part.name,
+            "name": Run::graft_name(c, g),
+            "level": g.level,
             "socket": self.word(&format!("socket_{}", part.socket)),
             "kind": part.action.as_ref().map(|a| a.kind.key()).unwrap_or("passive"),
-            "rules": rules,
+            "set": set,
+            "wild": part.set.is_empty(),
+            "rules": self.rules_of(g, slow, haste),
             "flavour": part.flavour,
         })
+    }
+
+    /// The set bonuses a creature has reached, in words.
+    fn sets_json(&self, k: &Creature) -> Vec<Value> {
+        let c = &self.content;
+        k.sets(c)
+            .iter()
+            .filter(|s| s.count > 0)
+            .map(|s| {
+                let def = &c.rules.sets[s.set];
+                let name = self.word(&format!("set_{}", def.id));
+                let next = def.bonuses.iter().map(|b| b.count).filter(|&n| n > s.count).min();
+                let bonus: Vec<String> = s
+                    .bonus
+                    .map(|b| {
+                        def.bonuses[b]
+                            .mods
+                            .iter()
+                            .map(|(m, n)| fill(&self.word(&format!("mod_{m}")), &[("n", mod_value(m, *n))]))
+                            .collect()
+                    })
+                    .unwrap_or_default();
+                json!({
+                    "id": def.id,
+                    "name": name,
+                    "count": s.count,
+                    "active": s.bonus.is_some(),
+                    "line": fill(&self.word("set_line"), &[("set", name.clone()), ("n", s.count.to_string())]),
+                    "bonus": bonus,
+                    "next": next.map(|n| fill(&self.word("set_next"), &[("n", n.to_string())])).unwrap_or_default(),
+                })
+            })
+            .collect()
     }
 
     fn creature_json(&self, k: &Creature, hp: i32) -> Value {
         let c = &self.content;
         let slow = k.slow_pct(c);
         let haste = k.sum(c, "haste");
+        let used = k.used_slots(c);
+        // the mass slots, then any head-only ones; filled from the first
+        let slots: Vec<Value> = (0..k.capacity(c))
+            .map(|i| json!({ "used": i < used, "head": i >= k.mass }))
+            .collect();
         json!({
             "name": k.name,
             "hp": hp,
             "max_hp": k.max_hp(c),
             "fill": format!("{}%", hp.max(0) * 100 / k.max_hp(c).max(1)),
             "mass": k.mass,
-            "used": k.parts.len(),
-            "empty": k.empty_slots(),
+            "used": used,
+            "empty": k.empty_slots(c),
             "slow": slow,
+            "regen": tenths(k.regen(c)),
             "evasion": k.base_evasion(c).min(c.rules.combat.evasion_cap),
-            "parts": k.parts.iter().map(|&p| self.card(p, slow, haste)).collect::<Vec<_>>(),
-            "slots": (0..k.mass).map(|i| i < k.parts.len() as i32).collect::<Vec<_>>(),
+            "parts": k.parts.iter().map(|&g| self.card(g, slow, haste)).collect::<Vec<_>>(),
+            "slots": slots,
+            "sets": self.sets_json(k),
         })
     }
 
     fn me_json(&self, r: &Run) -> Value {
+        let c = &self.content;
         let mut v = self.creature_json(&r.me, r.hp);
+        let slow = r.me.slow_pct(c);
+        let haste = r.me.sum(c, "haste");
+        let f = &c.rules.forage;
         v["acorns"] = json!(r.acorns);
         v["floor"] = json!(r.floor());
-        v["floors"] = json!(self.content.rules.floors);
+        v["floors"] = json!(c.rules.floors);
+        v["bag"] = json!(r
+            .bag
+            .iter()
+            .map(|&g| self.card(g, slow, haste))
+            .collect::<Vec<_>>());
+        v["bag_size"] = json!(c.rules.bag_size);
+        v["edit"] = json!(r.can_edit());
+        v["forage"] = json!({
+            "fill": format!("{}%", r.forage * 100 / f.full.max(1)),
+            "text": fill(&self.word("forage_bar"), &[("n", r.forage.to_string()), ("of", f.full.to_string())]),
+            "full": r.forage >= f.full,
+            "can_cultivate": r.can_cultivate(c),
+        });
         v
+    }
+
+    /// The plain button under a part on offer: it grafts the part if it
+    /// fits, else bags it, else there is no room.
+    fn take_button(&self, r: &Run, i: usize, label: Option<String>) -> Value {
+        let c = &self.content;
+        let onto = r.can_move(c, Place::Offer(i), Place::Creature);
+        let bag = r.can_move(c, Place::Offer(i), Place::Bag(r.bag.len()));
+        let word = if onto {
+            "take_graft"
+        } else if bag {
+            "take_bag"
+        } else {
+            "take_none"
+        };
+        let text = self.word(word);
+        json!({
+            "label": label.map(|l| format!("{l} · {text}")).unwrap_or(text),
+            "can": onto || bag,
+        })
     }
 
     fn map_json(&self, r: &Run) -> Value {
@@ -580,30 +756,89 @@ impl Game {
                     "kind": self.word(&format!("node_{}", kind.key())),
                 });
             }
-            Stage::Reward { foe, parts, acorns } => {
+            Stage::Reward {
+                foe,
+                parts,
+                acorns,
+                foraged,
+                taken,
+            } => {
                 let d = &c.creatures[*foe];
                 let slow = r.me.slow_pct(c);
                 let haste = r.me.sum(c, "haste");
+                let cards: Vec<Value> = parts
+                    .iter()
+                    .enumerate()
+                    .map(|(i, &p)| {
+                        let mut v = self.card(Graft::new(p), slow, haste);
+                        v["take"] = self.take_button(r, i, None);
+                        v
+                    })
+                    .collect();
+                let [lo, hi] = c.rules.forage.per_forage;
                 out["reward"] = json!({
                     "heading": fill(&self.word("reward_heading"), &[("foe", d.name.clone())]),
                     "acorns": fill(&self.word("reward_acorns"), &[("n", acorns.to_string())]),
                     "hp": fill(&self.word("reward_hp"), &[("n", c.rules.max_hp_reward.to_string())]),
-                    "room": if r.me.has_room() { self.word("reward_room") } else { self.word("reward_full") },
-                    "parts": parts.iter().map(|&p| self.card(p, slow, haste)).collect::<Vec<_>>(),
+                    "taken": taken,
+                    "room": self.word(if *taken { "reward_taken" } else { "reward_room" }),
+                    "parts": cards,
+                    "forage": {
+                        "can": foraged.is_none(),
+                        "label": fill(&self.word("forage_button"), &[("lo", lo.to_string()), ("hi", hi.to_string())]),
+                        "line": foraged.map(|n| fill(&self.word("forage_found"), &[("n", n.to_string())])).unwrap_or_default(),
+                    },
+                    "done": self.word(if *taken { "reward_done" } else { "reward_skip" }),
                 });
             }
             Stage::Encounter {
                 index,
                 lines,
-                pending,
+                found,
+                upgrade,
             } => {
                 let e = &c.encounters[*index];
+                let slow = r.me.slow_pct(c);
+                let haste = r.me.sum(c, "haste");
+                let found = found.map(|g| {
+                    let mut v = self.card(g, slow, haste);
+                    v["take"] = self.take_button(r, 0, None);
+                    v
+                });
+                // every part the upgrade could go to, with what it would become
+                let choices: Vec<Value> = if *upgrade {
+                    let body = r.me.parts.iter().enumerate().map(|(i, &g)| ("body", i, g));
+                    let bag = r.bag.iter().enumerate().map(|(i, &g)| ("bag", i, g));
+                    body.chain(bag)
+                        .map(|(kind, i, g)| {
+                            let place = Place::parse(kind, i).unwrap_or(Place::Bin);
+                            let up = Graft {
+                                part: g.part,
+                                level: g.level + 1,
+                            };
+                            let mut v = self.card(g, slow, haste);
+                            v["from"] = json!({ "kind": kind, "i": i });
+                            v["can"] = json!(r.can_move(c, place, Place::Upgrade));
+                            v["next"] = json!(self.rules_of(up, slow, haste));
+                            v["next_line"] = json!(fill(
+                                &self.word("upgrade_to"),
+                                &[("part", Run::graft_name(c, up))]
+                            ));
+                            v
+                        })
+                        .collect()
+                } else {
+                    Vec::new()
+                };
                 out["encounter"] = json!({
                     "name": e.name,
                     "text": e.text,
                     "good": e.good,
                     "lines": lines,
-                    "button": if pending.is_some() { self.word("encounter_graft") } else { self.word("encounter_on") },
+                    "found": found,
+                    "upgrade": upgrade,
+                    "choices": choices,
+                    "button": self.word(if found.is_some() || *upgrade { "encounter_leave" } else { "encounter_on" }),
                 });
             }
             Stage::Shop => {
@@ -615,18 +850,23 @@ impl Game {
                     .map(|s| {
                         s.offers
                             .iter()
-                            .map(|o| {
-                                let mut v = self.card(o.part, slow, haste);
+                            .enumerate()
+                            .map(|(i, o)| {
+                                let mut v = self.card(Graft::new(o.part), slow, haste);
                                 v["price"] = json!(o.price);
                                 v["sold"] = json!(o.sold);
-                                v["can"] = json!(!o.sold && r.acorns >= o.price);
+                                v["take"] = if o.sold {
+                                    json!({ "label": self.word("shop_sold"), "can": false })
+                                } else {
+                                    let price = fill(&self.word("shop_price"), &[("n", o.price.to_string())]);
+                                    self.take_button(r, i, Some(price))
+                                };
                                 v
                             })
                             .collect()
                     })
                     .unwrap_or_default();
                 let mass_bought = s.map(|s| s.mass_bought).unwrap_or(true);
-                let shed_used = s.map(|s| s.shed_used).unwrap_or(true);
                 out["shop"] = json!({
                     "offers": offers,
                     "mass": {
@@ -637,10 +877,6 @@ impl Game {
                         "label": fill(&self.word("shop_heal"), &[("n", rules.heal_price.to_string()), ("hp", rules.heal_amount.to_string())]),
                         "can": r.acorns >= rules.heal_price && r.hp < r.max_hp(c),
                     },
-                    "shed": {
-                        "label": fill(&self.word("shop_shed"), &[("n", rules.shed_price.to_string())]),
-                        "can": !shed_used && r.acorns >= rules.shed_price && !r.me.parts.is_empty(),
-                    },
                 });
             }
             Stage::Rest => {
@@ -650,14 +886,6 @@ impl Game {
                     "heal": fill(&self.word("rest_heal"), &[("n", heal.to_string())]),
                     "grow": self.word("rest_grow"),
                     "can_grow": r.me.mass < c.rules.max_mass,
-                });
-            }
-            Stage::Graft { part, .. } => {
-                let slow = r.me.slow_pct(c);
-                let haste = r.me.sum(c, "haste");
-                out["graft"] = json!({
-                    "part": self.card(*part, slow, haste),
-                    "heading": fill(&self.word("graft_heading"), &[("part", c.parts[*part].name.clone())]),
                 });
             }
             Stage::Dead | Stage::Won => {
@@ -706,7 +934,7 @@ impl Game {
                     .parts
                     .iter()
                     .enumerate()
-                    .map(|(i, &p)| {
+                    .map(|(i, &g)| {
                         let period = x.period[i];
                         let pct = if period == 0 {
                             100
@@ -714,8 +942,8 @@ impl Game {
                             (period - x.timer[i]) * 100 / period
                         };
                         json!({
-                            "name": c.parts[p].name,
-                            "kind": c.parts[p].action.as_ref().map(|a| a.kind.key()).unwrap_or("passive"),
+                            "name": Run::graft_name(c, g),
+                            "kind": c.parts[g.part].action.as_ref().map(|a| a.kind.key()).unwrap_or("passive"),
                             "fill": format!("{pct}%"),
                             "secs": if period == 0 { String::new() } else { secs(x.timer[i].max(0)) },
                             "fired": f.tick - x.fired_at[i] < 12,
@@ -731,6 +959,7 @@ impl Game {
                     "guard": x.guard,
                     "evasion": x.evasion(cap),
                     "slow": x.slow_pct,
+                    "regen": if x.regen > 0 { tenths(x.regen) } else { String::new() },
                     "mass": x.creature.mass,
                     "parts": parts,
                 })
@@ -751,7 +980,7 @@ impl Game {
                     Ev::PoisonTick => (fill(&self.word("float_hit"), &[("n", e.amount.to_string())]), "poison"),
                     Ev::Dodge => (self.word("float_dodge"), "dodge"),
                     Ev::Poisoned => (fill(&self.word("float_poisoned"), &[("n", e.amount.to_string())]), "poison"),
-                    Ev::Heal => (fill(&self.word("float_heal"), &[("n", e.amount.to_string())]), "heal"),
+                    Ev::Heal | Ev::Regen => (fill(&self.word("float_heal"), &[("n", e.amount.to_string())]), "heal"),
                     Ev::Guard => (fill(&self.word("float_guard"), &[("n", e.amount.to_string())]), "guard"),
                     Ev::Blocked => (fill(&self.word("float_blocked"), &[("n", e.amount.to_string())]), "guard"),
                     Ev::Evade => (fill(&self.word("float_evade"), &[("n", e.amount.to_string())]), "evade"),
@@ -844,7 +1073,9 @@ impl Game {
                     _ => self.run.as_ref().map(|r| (r.me.clone(), false)),
                 };
                 if let Some((k, _)) = &me {
-                    scene::draw_creature(&mut b, c, k, V3::ZERO, 0, &scene::idle_pose(k, anim));
+                    let ghost = if mode == "choose" { None } else { self.ghost };
+                    let pose = scene::idle_pose(k, anim);
+                    scene::draw_creature_with(&mut b, c, k, V3::ZERO, 0, &pose, ghost, anim);
                     let shift = if mode == "won" { 0 } else { ONE * 15 / 10 };
                     self.camera = orbit(int(7), int(2) + ONE * 4 / 10, ONE * 85 / 100, deg(1) / 5, shift);
                 } else {
@@ -881,6 +1112,33 @@ impl Game {
 
     pub fn view(&self) -> Vec<i32> {
         self.camera.values(self.aspect())
+    }
+
+    /// Where the player's creature stands on the screen between fights, as
+    /// CSS percentages, for the page's drop target: a box round the body.
+    pub fn zone_json(&self) -> String {
+        let Some(r) = &self.run else {
+            return json!({}).to_string();
+        };
+        let k = &r.me;
+        let aspect = self.aspect();
+        let middle = v3(0, scene::centre_height(k), 0);
+        let reach = scene::radius(k.mass) * 18 / 10;
+        let (Some((x, y)), Some((_, top))) = (
+            self.camera.screen(aspect, middle),
+            self.camera.screen(aspect, middle.add(v3(0, reach, 0))),
+        ) else {
+            return json!({}).to_string();
+        };
+        let half_h = (y - top).abs().max(ONE * 8);
+        let half_w = (half_h as i64 * self.css.1 as i64 / self.css.0.max(1) as i64) as i32;
+        json!({
+            "left": css_pct(x - half_w),
+            "top": css_pct(y - half_h),
+            "width": css_pct(half_w * 2),
+            "height": css_pct(half_h * 2),
+        })
+        .to_string()
     }
     pub fn instances(&self) -> Vec<i32> {
         self.values.clone()
@@ -1052,7 +1310,9 @@ pub(crate) mod tests {
         let check = |g: &Game| {
             let s = g.screen_json();
             assert!(!s.contains('{') || !s.contains("{n}"), "{s}");
-            for key in ["{n}", "{s}", "{part}", "{foe}", "{runs}"] {
+            for key in [
+                "{n}", "{s}", "{part}", "{foe}", "{runs}", "{set}", "{of}", "{lo}", "{now}",
+            ] {
                 assert!(!s.contains(key), "unfilled {key} in {}: {s}", g.mode_key());
             }
             let h = g.hud_json();
@@ -1078,23 +1338,26 @@ pub(crate) mod tests {
                     g.conclude();
                 }
                 "reward" => {
+                    g.reward_forage();
+                    check(&g);
                     g.reward_part(0);
+                    check(&g);
+                    g.cultivate();
+                    g.reward_done();
                 }
                 "encounter" => {
+                    g.encounter_take();
+                    g.move_part("body", 0, "upgrade", 0);
+                    check(&g);
                     g.encounter_done();
                 }
                 "shop" => {
                     g.shop_buy(0);
-                    if g.mode_key() == "graft" {
-                        g.graft_decline();
-                    }
+                    check(&g);
                     g.shop_leave();
                 }
                 "rest" => {
                     g.rest_heal();
-                }
-                "graft" => {
-                    g.graft_replace(0);
                 }
                 _ => break,
             }
@@ -1107,6 +1370,29 @@ pub(crate) mod tests {
         let c = crate::content::tests::content();
         let sources = [include_str!("game.rs"), include_str!("run.rs")];
         let mut keys: Vec<String> = Vec::new();
+        // words picked by a condition inside the call to `word`
+        for src in sources {
+            for piece in src.split("word(if ").skip(1) {
+                let head = piece.split("})").next().unwrap_or("");
+                for quoted in head.split('"').skip(1).step_by(2) {
+                    if !quoted.is_empty() && !quoted.contains(' ') {
+                        keys.push(quoted.to_string());
+                    }
+                }
+            }
+            // words named through a variable or a helper
+            for piece in src.split('"').skip(1).step_by(2) {
+                let reached = ["take_", "out_", "level_", "forage_", "set_"];
+                if reached
+                    .iter()
+                    .any(|p| piece.starts_with(p) && piece.len() > p.len())
+                    && !piece.contains(' ')
+                    && !piece.contains('{')
+                {
+                    keys.push(piece.to_string());
+                }
+            }
+        }
         for src in sources {
             for piece in src.split("word(\"").skip(1) {
                 if let Some(end) = piece.find('"') {
@@ -1122,6 +1408,9 @@ pub(crate) mod tests {
         }
         for s in crate::content::SOCKETS {
             keys.push(format!("socket_{s}"));
+        }
+        for s in &c.rules.sets {
+            keys.push(format!("set_{}", s.id));
         }
         for k in [
             Kind::Battle,
@@ -1161,10 +1450,60 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn dragging_a_part_from_the_bag_onto_the_creature_grafts_it() {
+        let mut g = game_with("");
+        g.begin();
+        g.start_with_seed(0, 3);
+        assert!(g.move_part("body", 0, "bag", 0));
+        let s: Value = serde_json::from_str(&g.screen_json()).unwrap();
+        assert_eq!(s["me"]["bag"].as_array().unwrap().len(), 1);
+        assert!(g.can_move("bag", 0, "creature", 0));
+        assert!(!g.can_move("bag", 0, "nowhere", 0));
+        assert!(g.hover("bag", 0), "it would fit, so its ghost shows");
+        assert!(g.ghost.is_some());
+        assert!(g.move_part("bag", 0, "creature", 0));
+        assert!(g.ghost.is_none());
+        let s: Value = serde_json::from_str(&g.screen_json()).unwrap();
+        assert_eq!(s["me"]["bag"].as_array().unwrap().len(), 0);
+        assert_eq!(s["me"]["parts"].as_array().unwrap().len(), 2);
+        let z: Value = serde_json::from_str(&g.zone_json()).unwrap();
+        assert!(z["left"].as_str().unwrap().ends_with('%'));
+    }
+
+    #[test]
+    fn the_reward_screen_offers_forage_then_health_or_a_part_then_continue() {
+        let mut g = game_with("");
+        g.begin();
+        g.start_with_seed(0, 3);
+        let first = g.run.as_ref().unwrap().choices()[0];
+        g.pick(first);
+        let c = &g.content;
+        if let Some(f) = g.run.as_mut().and_then(|r| r.fight_mut()) {
+            f.sides[FOE].hp = 0;
+            f.step(c);
+        }
+        assert!(g.conclude());
+        assert_eq!(g.mode_key(), "reward");
+        let s: Value = serde_json::from_str(&g.screen_json()).unwrap();
+        assert_eq!(s["reward"]["forage"]["can"], true);
+        assert!(g.reward_forage());
+        let s: Value = serde_json::from_str(&g.screen_json()).unwrap();
+        assert_eq!(s["reward"]["forage"]["can"], false);
+        assert!(g.reward_hp());
+        assert_eq!(g.mode_key(), "reward", "the screen waits for Continue");
+        assert!(g.reward_done());
+        assert_eq!(g.mode_key(), "map");
+    }
+
+    #[test]
     fn secs_rounds_to_a_tenth() {
         assert_eq!(secs(120), "2.0");
         assert_eq!(secs(144), "2.4");
         assert_eq!(secs(0), "0.0");
         assert_eq!(css_pct(ONE * 75 / 2), "37.50%");
+        assert_eq!(
+            (tenths(5), tenths(10), tenths(25)),
+            ("0.5".into(), "1".into(), "2.5".into())
+        );
     }
 }
